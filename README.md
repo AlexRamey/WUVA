@@ -27,14 +27,16 @@ A (potential) source for cover art. The process seems complicated, but the image
     		* [https://www.musicbrainz.org/ws/2/recording?query=%28%22Talladega%22%20OR%20%22Springsteen%22%29+AND+artist:%22Eric+Church%22](https://www.musicbrainz.org/ws/2/recording?query=%28%22Talladega%22%20OR%20%22Springsteen%22%29+AND+artist:%22Eric+Church%22) where you can imagine that `Springsteen` and `Talladega` are identical phrases except for one contains `+` while the other contains `&`.
     
     * Retrieve the `id` for all of the `releases`
-    	* If no `id`s exists, a placeholder image should be displayed
+    	* If no `ids` exists, a placeholder image should be displayed
     * Sample query:
     	* `cue_title`: Talladega
     	* `track_artist_name`: Eric Church
     	* Search url: [https://musicbrainz.org/ws/2/recording/?query="talladega"%20AND%20artist:%22eric%20church%22&limit=10](https://musicbrainz.org/ws/2/recording/?query=talladega%20AND%20artist:%22eric%20church%22&limit=10)
     	* A Resulting id: `9ca2e2db-bc6e-4f71-b16f-63020aa4b651` (among others)
+
 3. For all release_ids (up to 10), fire off concurrent requests with the following format:
 	* Use the `id` to construct an image url based on the the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API)
-	* Url syntax: [http://coverartarchive.org/release/id/front-500]()
-	* Sample image url: *[https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500](https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500)*
+	* Url syntax: [http://coverartarchive.org/release/id/front-500.jpg]()
+	* Sample image url: [https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500](https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500.jpg)
+	
 4. Each result should write its result back to its respective spot in an array, based on the order the requests were fired off (which is also the order result_ids were found in the search results). When all requests are done, step through the array sequentially. If we find image data, use it (priority goes to higher search results). If we exhaust the array without finding image data, use a default image.
