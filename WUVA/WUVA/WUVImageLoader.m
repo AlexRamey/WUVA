@@ -35,15 +35,18 @@ this is as follows:
 Our goal is to find the appropriate <release-id>. For now, this is our process:
  
 If recording-list has count 0, fail.
- 
-Go into first recording. If there is no release-list, fail.
 
-Step through the release-list in order, and hit URL 2 with each release-id.
-If it works, return the data, otherwise continue stepping through the list.
+Step through release-lists and gather release_ids until we've got 10 or we finish the 
+xml.
  
-If we reach the end of the recording-list, then we fail.
+Fire off all (up to 10) cover art requests at once, and have them write their result
+ back to an array at their respective indices.
+ 
+ When all have returned, step through the array in sequential order. Use the first image data
+ we come across (b/c it was higher up in search results). If no image data came back, use default image.
  
 2) (https) coverartarchive.org/release/<release-id>/front-500.jpg returns the image data
+ 
 */
 
 - (id)init
@@ -79,6 +82,8 @@ If we reach the end of the recording-list, then we fail.
     artist = [self formatArtist:artist];
     
     NSString *brainz_url = [@"https://www.musicbrainz.org/ws/2/recording?query=" stringByAppendingString:[[NSString stringWithFormat:@"%@ AND %@", track, artist] urlencode]];
+    
+    brainz_url = [brainz_url stringByAppendingString:@"&limit=10"];
     
     NSLog(@"Brainz-URL %@", brainz_url);
     
@@ -229,12 +234,6 @@ If we reach the end of the recording-list, then we fail.
     {
         WUVRelease *release = [[WUVRelease alloc] initWithReleaseTitle:string releaseId:[NSString stringWithString:_release_id]];
         [_releases addObject:release];
-        
-        if ([_releases count] > 10)
-        {
-            /* we have enough URLs to check for an image */
-            [_parser abortParsing];
-        }
     }
 }
 
