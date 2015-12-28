@@ -36,7 +36,7 @@ A (potential) source for cover art. The process seems complicated, but the image
 
 3. For all release_ids (up to 10), fire off concurrent requests with the following format:
 	* Use the `id` to construct an image url based on the the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API)
-	* Url syntax: http://coverartarchive.org/release/`id`/front-500.jpg
+	* Url syntax: 'https://coverartarchive.org/release/<release_id>/front-500.jpg'
 	* Sample image url: [https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500](https://coverartarchive.org/release/9ca2e2db-bc6e-4f71-b16f-63020aa4b651/front-500.jpg)
 	
-4. Each result should write its result back to its respective spot in an array, based on the order the requests were fired off (which is also the order result_ids were found in the search results). When all requests are done, step through the array sequentially. If we find image data, use it (priority goes to higher search results). If we exhaust the array without finding image data, use a default image.
+4. Each request should write its result back to its respective spot in an array, based on the order the requests were fired off (which is also the order result_ids were found in the search results). When all requests are done, step through the array sequentially. If we find image data, use it (priority goes to higher search results). If we exhaust the array without finding image data, use a default image.
