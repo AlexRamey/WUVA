@@ -16,9 +16,27 @@
 @property (nonatomic, strong) WUVImageLoader *imageLoader;
 @property (nonatomic, weak) IBOutlet UIImageView *coverArt;
 @property (nonatomic, strong) UIImageView *backgroundImage;
+@property (nonatomic, weak) IBOutlet UIButton *play;
+@property (nonatomic, weak) IBOutlet UILabel *artist;
+@property (nonatomic, weak) IBOutlet UILabel *songTitle;
 @end
 
 @implementation WUVPlayerViewController
+
+- (IBAction)playButton:(id)sender
+{
+    if ([self.tritonPlayer isExecuting]) {
+        [self.tritonPlayer stop];
+        UIImage *buttonImage = [UIImage imageNamed:@"playIcon.png"];
+        [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
+    }
+    else{
+        [self.tritonPlayer play];
+        UIImage *buttonImage = [UIImage imageNamed:@"pauseIcon.png"];
+        [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
+        
+    }
+}
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -48,6 +66,8 @@
 }
 
 - (void)viewDidLoad {
+    UIImage *buttonImage = [UIImage imageNamed:@"pauseIcon.png"];
+    [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
     [super viewDidLoad];
 }
 
@@ -79,6 +99,9 @@
         NSString *currentAlbumName = [cuePointEvent.data
                                       objectForKey:TrackAlbumNameKey];
         NSLog(@"Title: %@, Artist: %@, Album: %@", currentSongTitle, currentArtistName, currentAlbumName);
+        
+        _artist.text = currentArtistName;
+        _songTitle.text = currentSongTitle;
         
         [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
             if (!release)

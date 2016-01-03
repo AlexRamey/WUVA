@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F60DFB51C3985D100009F2B /* playIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F60DFB31C3985D100009F2B /* playIcon.png */; };
+		1F60DFB61C3985D100009F2B /* pauseIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F60DFB41C3985D100009F2B /* pauseIcon.png */; };
 		D0366D2C1BE0309400CEF5E5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D2B1BE0309400CEF5E5 /* main.m */; };
 		D0366D2F1BE0309400CEF5E5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D2E1BE0309400CEF5E5 /* AppDelegate.m */; };
 		D0366D321BE0309400CEF5E5 /* WUVPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D311BE0309400CEF5E5 /* WUVPlayerViewController.m */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F60DFB31C3985D100009F2B /* playIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playIcon.png; sourceTree = "<group>"; };
+		1F60DFB41C3985D100009F2B /* pauseIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pauseIcon.png; sourceTree = "<group>"; };
 		D0366D271BE0309400CEF5E5 /* WUVA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WUVA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0366D2B1BE0309400CEF5E5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D0366D2D1BE0309400CEF5E5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -110,6 +114,8 @@
 		D0366D2A1BE0309400CEF5E5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1F60DFB31C3985D100009F2B /* playIcon.png */,
+				1F60DFB41C3985D100009F2B /* pauseIcon.png */,
 				D0366D2B1BE0309400CEF5E5 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -250,6 +256,8 @@
 			files = (
 				D0366D3A1BE0309400CEF5E5 /* LaunchScreen.storyboard in Resources */,
 				D0366D371BE0309400CEF5E5 /* Assets.xcassets in Resources */,
+				1F60DFB51C3985D100009F2B /* playIcon.png in Resources */,
+				1F60DFB61C3985D100009F2B /* pauseIcon.png in Resources */,
 				D0366D351BE0309400CEF5E5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
