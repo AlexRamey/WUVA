@@ -43,8 +43,11 @@
 
 - (void)viewDidLayoutSubviews
 {
-    _backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height)];
-    [self.view insertSubview:_backgroundImage atIndex:0];
+    if (!_backgroundImage)
+    {
+        _backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height)];
+        [self.view insertSubview:_backgroundImage atIndex:0];
+    }
 }
 
 - (void)viewDidLoad {
@@ -58,8 +61,8 @@
 
 - (void)updateBackgroundView
 {
-    _backgroundImage.image = nil;
-    _backgroundImage.image = [UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:nil saturationDeltaFactor:2.0 maskImage:nil];
+    [_backgroundImage setImage:nil];
+    [_backgroundImage setImage:[UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:nil saturationDeltaFactor:2.0 maskImage:nil]];
     [_backgroundImage setNeedsDisplay];
 }
 
