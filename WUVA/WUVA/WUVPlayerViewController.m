@@ -16,6 +16,7 @@
 @property (nonatomic, strong) WUVImageLoader *imageLoader;
 @property (nonatomic, weak) IBOutlet UIImageView *coverArt;
 @property (nonatomic, strong) UIImageView *backgroundImage;
+@property (nonatomic, strong) NSNumber *interruptedOnPlayback;
 @end
 
 @implementation WUVPlayerViewController
@@ -27,6 +28,7 @@
     if (self)
     {
         self.imageLoader = [WUVImageLoader new];
+        self.interruptedOnPlayback = @NO;
         
         
         NSDictionary *settings = @{SettingsStationNameKey : @"MOBILEFM",
@@ -54,6 +56,11 @@
     [super viewDidLoad];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -62,7 +69,8 @@
 - (void)updateBackgroundView
 {
     [_backgroundImage setImage:nil];
-    [_backgroundImage setImage:[UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:nil saturationDeltaFactor:2.0 maskImage:nil]];
+    UIColor *tintColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:.60];
+    [_backgroundImage setImage:[UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:tintColor saturationDeltaFactor:2.0 maskImage:nil]];
     [_backgroundImage setNeedsDisplay];
 }
 
@@ -86,7 +94,6 @@
         [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
             if (!release)
             {
-                NSLog(@"No Image!");
                 // load default
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
@@ -98,7 +105,6 @@
             }
             else
             {
-                NSLog(@"Image Set");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.coverArt.image = [UIImage imageWithData:release.artwork];
                     [self.coverArt setNeedsDisplay];
@@ -109,12 +115,26 @@
     }
 }
 
-/* TODO: Manage interruptions appropriately (phone calls, alarms). Code below is just pasted from SDK PDFs to give some idea.
- Some of it is commented out because this class doesn't yet have a state variable called
- 'interruptedOnPlayback'*/
-
 -(void)player:(TritonPlayer *)player didChangeState:(TDPlayerState)state {
-    NSLog(@"State Changed: %d", state);
+    switch (state) {
+        case kTDPlayerStateConnecting:
+            NSLog(@"State: Connecting");
+            break;
+        case kTDPlayerStatePlaying:
+            NSLog(@"State: Playing");
+            break;
+        case kTDPlayerStateStopped:
+            NSLog(@"State: Stopped");
+            break;
+        case kTDPlayerStateError:
+            NSLog(@"State: Error");
+            break;
+        case kTDPlayerStatePaused:
+            NSLog(@"State: Paused");
+            break;
+        default:
+            break;
+    }
 }
 
 -(void)player:(TritonPlayer *)player didReceiveInfo:(TDPlayerInfo)info andExtra:(NSDictionary *)extra {
@@ -138,27 +158,20 @@
     NSLog(@"playerBeginInterruption");
     if ([self.tritonPlayer isExecuting]) {
         [self.tritonPlayer stop];
-        // self.interruptedOnPlayback = YES;
+        self.interruptedOnPlayback = @YES;
     }
 }
 
 - (void)playerEndInterruption:(TritonPlayer *) player {
     NSLog(@"playerEndInterruption");
-    /*
-    if (self.interruptedOnPlayback && player.shouldResumePlaybackAfterInterruption) {
-        
+    if ([self.interruptedOnPlayback boolValue] && player.shouldResumePlaybackAfterInterruption) {
+        NSLog(@"Resume Stream!");
         // Resume stream
         [self.tritonPlayer play];
-        self.playerViewController.playerState = kEmbeddedStatePlaying;
+        // self.playerViewController.playerState = kEmbeddedStatePlaying;
         
-        self.interruptedOnPlayback = NO;
+        self.interruptedOnPlayback = @NO;
     }
-    */
-    if (self.tritonPlayer.shouldResumePlaybackAfterInterruption)
-    {
-        [self.tritonPlayer play];
-    }
-    
 }
 
 @end
