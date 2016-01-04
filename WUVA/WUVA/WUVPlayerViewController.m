@@ -23,16 +23,24 @@
 
 @implementation WUVPlayerViewController
 
+- (IBAction)share:(id)sender
+{
+    NSString *texttoshare = [NSString stringWithFormat: @"Hey check out this awesome song, %@, by %@ I'm listening to on WUVA 92.7", _songTitle.text, _artist.text];
+    NSArray *activityItems = @[texttoshare];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    [self presentViewController:activityVC animated:TRUE completion:nil];
+}
+
 - (IBAction)playButton:(id)sender
 {
     if ([self.tritonPlayer isExecuting]) {
         [self.tritonPlayer stop];
-        UIImage *buttonImage = [UIImage imageNamed:@"playIcon.png"];
+        UIImage *buttonImage = [UIImage imageNamed:@"PlayIcon"];
         [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
     }
     else{
         [self.tritonPlayer play];
-        UIImage *buttonImage = [UIImage imageNamed:@"pauseIcon.png"];
+        UIImage *buttonImage = [UIImage imageNamed:@"PauseIcon"];
         [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
         
     }
@@ -66,8 +74,13 @@
 }
 
 - (void)viewDidLoad {
-    UIImage *buttonImage = [UIImage imageNamed:@"pauseIcon.png"];
+    UIImage *buttonImage = [UIImage imageNamed:@"PauseIcon"];
     [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
+    [self.navigationController.navigationBar setTranslucent:YES];
+    self.navigationController.view.backgroundColor = [UIColor clearColor];
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [[UIImage alloc] init];
+    self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     [super viewDidLoad];
 }
 

@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="14F1509" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="5yy-jf-8Kp">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="v0Y-RP-eny">
+            <objects>
+                <navigationController id="5yy-jf-8Kp" sceneMemberID="viewController">
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="0Fy-ea-X1T">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="fnC-zx-e9h"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OGs-h5-Uvo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-197" y="188"/>
+        </scene>
         <!--Player View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -20,7 +37,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="84Z-yX-xn3">
-                                <rect key="frame" x="36" y="60" width="248" height="248"/>
+                                <rect key="frame" x="36" y="75" width="248" height="248"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="300" id="ZVz-GW-dWV"/>
                                     <constraint firstAttribute="width" secondItem="84Z-yX-xn3" secondAttribute="height" multiplier="1:1" id="xaX-UW-JL1"/>
@@ -34,19 +51,19 @@
                                 </variation>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SdR-yd-Cla">
-                                <rect key="frame" x="141" y="338" width="38.5" height="15"/>
+                                <rect key="frame" x="141" y="353" width="38.5" height="15"/>
                                 <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="13"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tob-az-UY7">
-                                <rect key="frame" x="147" y="357" width="26.5" height="15"/>
+                                <rect key="frame" x="147" y="372" width="26.5" height="15"/>
                                 <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="13"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZfC-Kv-rMX">
-                                <rect key="frame" x="130" y="422" width="60" height="60"/>
+                                <rect key="frame" x="130" y="437" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="GAl-C8-wdS"/>
                                     <constraint firstAttribute="height" constant="60" id="oje-77-q50"/>
@@ -56,7 +73,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OuV-BO-RAn">
-                                <rect key="frame" x="230" y="438" width="30" height="30"/>
+                                <rect key="frame" x="230" y="453" width="30" height="30"/>
                                 <state key="normal" title="FAV"/>
                             </button>
                         </subviews>
@@ -70,12 +87,20 @@
                             <constraint firstItem="Tob-az-UY7" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Pxb-N0-Phk"/>
                             <constraint firstItem="ZfC-Kv-rMX" firstAttribute="top" secondItem="Tob-az-UY7" secondAttribute="bottom" constant="50" id="dcQ-XX-zxm"/>
                             <constraint firstAttribute="trailingMargin" secondItem="84Z-yX-xn3" secondAttribute="trailing" constant="20" id="ii9-XD-gfQ"/>
-                            <constraint firstItem="84Z-yX-xn3" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" multiplier="0.65" id="j9X-Ea-8GJ"/>
+                            <constraint firstItem="84Z-yX-xn3" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" multiplier="0.7" id="j9X-Ea-8GJ"/>
                             <constraint firstItem="84Z-yX-xn3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="m97-d6-dec"/>
                             <constraint firstItem="SdR-yd-Cla" firstAttribute="top" secondItem="84Z-yX-xn3" secondAttribute="bottom" constant="30" id="x5m-jH-jTF"/>
                             <constraint firstItem="84Z-yX-xn3" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="ySk-yy-EVz"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="TM3-dk-0EQ">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="dnG-cn-v7x">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="share:" destination="BYZ-38-t0r" id="DFr-DX-KYi"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="artist" destination="SdR-yd-Cla" id="Idg-Ch-9EA"/>
