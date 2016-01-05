@@ -36,14 +36,9 @@
 {
     if ([self.tritonPlayer isExecuting]) {
         [self.tritonPlayer stop];
-        UIImage *buttonImage = [UIImage imageNamed:@"PlayIcon"];
-        [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
     }
     else{
         [self.tritonPlayer play];
-        UIImage *buttonImage = [UIImage imageNamed:@"PauseIcon"];
-        [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
-        
     }
 }
 
@@ -74,24 +69,28 @@
     if (!_backgroundImage)
     {
         _backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height)];
+        // TODO: set backgroundImage.image to initially be the LaunchImage (once we have Launch Image).
         [self.view insertSubview:_backgroundImage atIndex:0];
     }
 }
 
 - (void)viewDidLoad {
-    UIImage *buttonImage = [UIImage imageNamed:@"PauseIcon"];
-    [_play setBackgroundImage:buttonImage forState:UIControlStateNormal];
+    [super viewDidLoad];
     [self.navigationController.navigationBar setTranslucent:YES];
     self.navigationController.view.backgroundColor = [UIColor clearColor];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [[UIImage alloc] init];
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
-    [super viewDidLoad];
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
+    // the following line causes the status bar to be white
+    [self.navigationController.navigationBar setBarStyle:UIBarStyleBlack];
+    
+    /* start the labels off as single-space strings so they aren't visible
+     (the space is important so the labels don't collapse and cause lower 
+     buttons to shift) */
+    _artist.text = @" ";
+    _songTitle.text = @" ";
+    _artist.textColor = [UIColor whiteColor];
+    _songTitle.textColor = [UIColor whiteColor];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -99,6 +98,17 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showPausedUI
+{
+    self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
+    [self.coverArt setNeedsDisplay];
+    [self updateBackgroundView];
+    
+    _artist.text = @"WUVA 92.7";
+    _songTitle.text = @" ";         // make invisible but don't let label collapse
+}
+
+/* This method simply updates the background view to be the blur of _coverArt.image */
 - (void)updateBackgroundView
 {
     [_backgroundImage setImage:nil];
@@ -120,33 +130,30 @@
                                       objectForKey:CommonCueTitleKey];
         NSString *currentArtistName = [cuePointEvent.data
                                        objectForKey:TrackArtistNameKey];
-        NSString *currentAlbumName = [cuePointEvent.data
-                                      objectForKey:TrackAlbumNameKey];
-        NSLog(@"Title: %@, Artist: %@, Album: %@", currentSongTitle, currentArtistName, currentAlbumName);
         
         _artist.text = currentArtistName;
         _songTitle.text = currentSongTitle;
-        
+        _coverArt.image = nil;
+        [_coverArt setNeedsDisplay];
+        [self updateBackgroundView];
         [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
-            if (!release)
-            {
-                // load default
-                dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (!release)
+                {
+                    // load default
                     self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
                     [self.coverArt setNeedsDisplay];
                     [self updateBackgroundView];
                     
                     if (error){NSLog(@"%@", error);}
-                });
-            }
-            else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                }
+                else
+                {
                     self.coverArt.image = [UIImage imageWithData:release.artwork];
                     [self.coverArt setNeedsDisplay];
                     [self updateBackgroundView];
-                });
-            }
+                }
+            });
         }];
     }
 }
@@ -157,16 +164,21 @@
             NSLog(@"State: Connecting");
             break;
         case kTDPlayerStatePlaying:
-            NSLog(@"State: Playing");
+            NSLog(@"Status: Playing");
+            [_play setBackgroundImage:[UIImage imageNamed:@"PauseIcon"] forState:UIControlStateNormal];
             break;
         case kTDPlayerStateStopped:
             NSLog(@"State: Stopped");
+             [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
+            [self showPausedUI];
             break;
         case kTDPlayerStateError:
             NSLog(@"State: Error");
             break;
         case kTDPlayerStatePaused:
             NSLog(@"State: Paused");
+            [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
+            [self showPausedUI];
             break;
         default:
             break;
