@@ -10,6 +10,7 @@
 #import "WUVImageLoader.h"
 #import "UIImageEffects.h"
 #import <TritonPlayerSDK/TritonPlayerSDK.h>
+@import MediaPlayer;
 
 @interface WUVPlayerViewController () <TritonPlayerDelegate>
 @property (nonatomic, strong) TritonPlayer *tritonPlayer;
@@ -22,7 +23,11 @@
 @property (nonatomic, weak) IBOutlet UILabel *songTitle;
 @end
 
+
 @implementation WUVPlayerViewController
+
+NSString * const WUV_CACHED_IMAGE_KEY = @"WUV_CACHED_IMAGE_KEY";
+NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 - (IBAction)share:(id)sender
 {
@@ -51,6 +56,9 @@
         self.imageLoader = [WUVImageLoader new];
         self.interruptedOnPlayback = @NO;
         
+        // initialize lock screen control and info parameters
+        [self configureRemoteCommandHandling];
+        [self configureNowPlayingInfo];
         
         NSDictionary *settings = @{SettingsStationNameKey : @"MOBILEFM",
                                    SettingsBroadcasterKey : @"Triton Digital",
@@ -98,6 +106,74 @@
     // Dispose of any resources that can be recreated.
 }
 
+/* This method sets up handling for remote commands, like from the lock screen */
+- (void)configureRemoteCommandHandling
+{
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    
+    // register to receive remote play event
+    [commandCenter.playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [_tritonPlayer play];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    // register to receive remote pause event
+    [commandCenter.pauseCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [_tritonPlayer stop];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    // register to receive remote like/favorite event
+    commandCenter.likeCommand.localizedTitle = @"Favorite";
+    [commandCenter.likeCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        NSLog(@"Mr. Jeffrey, this hook may be of interest to you.");
+        // TODO: Implement Logic to figure out if current song is already favorited.
+        // If so, localizedTitle should be Unfavorite and this btn should unfavorite it.
+        // else, localizedTitle should be Favorite and this btn should favorite it.
+        // After action is complete, localizedTitle should be toggled
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+}
+
+/* Here we wish to update the now playing info that will be displayed on the lock screen */
+- (void)configureNowPlayingInfo
+{
+    MPNowPlayingInfoCenter* info = [MPNowPlayingInfoCenter defaultCenter];
+    NSMutableDictionary* newInfo = [NSMutableDictionary dictionary];
+    
+    // Set song title info
+    if (_songTitle.text)
+    {
+        [newInfo setObject:[NSString stringWithString:_songTitle.text] forKey:MPMediaItemPropertyTitle];
+    }
+    else
+    {
+        [newInfo setObject:@" " forKey:MPMediaItemPropertyTitle];
+    }
+    
+    // Set artist info
+    if (_artist.text && ([_artist.text caseInsensitiveCompare:@"WUVA 92.7"] != NSOrderedSame))
+    {
+        NSString *artistInfo = [[NSString stringWithString:_artist.text] stringByAppendingString:@" - WUVA 92.7"];
+        [newInfo setObject:artistInfo forKey:MPMediaItemPropertyArtist];
+    }
+    else
+    {
+        [newInfo setObject:@"WUVA 92.7" forKey:MPMediaItemPropertyArtist];
+    }
+    
+    // Set album art info
+    if (_coverArt.image)
+    {
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:_coverArt.image];
+        [newInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
+    }
+    
+    // Update the now playing info
+    info.nowPlayingInfo = newInfo;
+}
+
+/* This method updates the UI and NowPlayingInfo for the paused (or stopped) state */
 - (void)showPausedUI
 {
     self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
@@ -106,15 +182,57 @@
     
     _artist.text = @"WUVA 92.7";
     _songTitle.text = @" ";         // make invisible but don't let label collapse
+    
+    [self configureNowPlayingInfo];
 }
 
 /* This method simply updates the background view to be the blur of _coverArt.image */
 - (void)updateBackgroundView
 {
     [_backgroundImage setImage:nil];
-    UIColor *tintColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:.60];
-    [_backgroundImage setImage:[UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:tintColor saturationDeltaFactor:2.0 maskImage:nil]];
-    [_backgroundImage setNeedsDisplay];
+    if (_coverArt.image != nil)
+    {
+        UIColor *tintColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:.60];
+        [_backgroundImage setImage:[UIImageEffects imageByApplyingBlurToImage:_coverArt.image withRadius:64 tintColor:tintColor saturationDeltaFactor:2.0 maskImage:nil]];
+        [_backgroundImage setNeedsDisplay];
+    }
+}
+
+/* 
+ The following two methods are used to manage our single-image cache, which is used
+ to help the UI quickly recover when the playing song doesn't change over the course
+ of a pause state. In addition to saving the currently cached image, we save identifying
+ information <song_title><arist_name> to help identify which image is currently in cache
+*/
+- (UIImage *)retrieveImageFromCacheForSong:(NSString *)song artist:(NSString *)artist
+{
+    NSString *currentlyCachedImageId = [[NSUserDefaults standardUserDefaults] objectForKey:WUV_CACHED_IMAGE_ID_KEY];
+    
+    if (!currentlyCachedImageId || !song || !artist)
+    {
+        return nil;
+    }
+    
+    if ([[song stringByAppendingString:artist] compare:currentlyCachedImageId] == NSOrderedSame)
+    {
+        return [UIImage imageWithData:([[NSUserDefaults standardUserDefaults] objectForKey:WUV_CACHED_IMAGE_KEY])];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+/* Here, we cache a given image with identifying song/artist params */
+- (void)cacheImage:(UIImage *)image forSong:(NSString *)song artist:(NSString *)artist
+{
+    if (!image || !song || !artist)
+    {
+        return;
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[song stringByAppendingString:artist] forKey:WUV_CACHED_IMAGE_ID_KEY];
+    [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(image) forKey:WUV_CACHED_IMAGE_KEY];
 }
 
 #pragma mark TritonPlayerDelegate methods
@@ -133,28 +251,42 @@
         
         _artist.text = currentArtistName;
         _songTitle.text = currentSongTitle;
-        _coverArt.image = nil;
+        
+        // if cache retrieval fails, it will return nil.
+        _coverArt.image = [self retrieveImageFromCacheForSong:currentSongTitle artist:currentArtistName];
         [_coverArt setNeedsDisplay];
+        
+        // immediately configure the NowPlayingInfo now that song,artist,image have changed
+        [self configureNowPlayingInfo];
+        
+        // update the background view to reflect different _coverArt.image
         [self updateBackgroundView];
-        [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (!release)
-                {
-                    // load default
-                    self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
-                    [self.coverArt setNeedsDisplay];
-                    [self updateBackgroundView];
-                    
-                    if (error){NSLog(@"%@", error);}
-                }
-                else
-                {
-                    self.coverArt.image = [UIImage imageWithData:release.artwork];
-                    [self.coverArt setNeedsDisplay];
-                    [self updateBackgroundView];
-                }
-            });
-        }];
+        
+        if (!_coverArt.image)   //cache miss
+        {
+            [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!release)
+                    {
+                        // load default
+                        self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
+                        [self.coverArt setNeedsDisplay];
+                        [self updateBackgroundView];
+                        
+                        if (error){NSLog(@"%@", error);}
+                    }
+                    else
+                    {
+                        self.coverArt.image = [UIImage imageWithData:release.artwork];
+                        [self.coverArt setNeedsDisplay];
+                        [self configureNowPlayingInfo];
+                        [self updateBackgroundView];
+                        // cache the fetched image
+                        [self cacheImage:self.coverArt.image forSong:currentSongTitle artist:currentArtistName];
+                    }
+                });
+            }];
+        }
     }
 }
 
@@ -216,8 +348,6 @@
         NSLog(@"Resume Stream!");
         // Resume stream
         [self.tritonPlayer play];
-        // self.playerViewController.playerState = kEmbeddedStatePlaying;
-        
         self.interruptedOnPlayback = @NO;
     }
 }
