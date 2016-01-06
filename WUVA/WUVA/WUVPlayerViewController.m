@@ -123,7 +123,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }];
     
     // register to receive remote like/favorite event
-    commandCenter.likeCommand.localizedTitle = @"Favorite";
+    commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
     [commandCenter.likeCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         NSLog(@"Mr. Jeffrey, this hook may be of interest to you.");
         // TODO: Implement Logic to figure out if current song is already favorited.
@@ -154,7 +154,9 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }
     else
     {
-        [newInfo setObject:@"92.7 Nash Icon" forKey:MPMediaItemPropertyArtist];
+        // if we're here, then we're in the initial state or the pause state
+        // We want 92.7 NashIcon to appear in the song title position
+        [newInfo setObject:@"92.7 Nash Icon" forKey:MPMediaItemPropertyTitle];
     }
     
     // Set album art info
@@ -266,6 +268,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
                         // load default
                         self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
                         [self.coverArt setNeedsDisplay];
+                        [self configureNowPlayingInfo];
                         [self updateBackgroundView];
                         
                         if (error){NSLog(@"%@", error);}
