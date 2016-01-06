@@ -49,7 +49,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FavTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    
+    NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[_arrayOfTitles objectAtIndex: [indexPath row]]];
+    UIImage* image = [UIImage imageWithData:imageData];
+    [[cell image] setImage:image];
     [[cell artist] setText:[_arrayOfArtists objectAtIndex:[indexPath row]]];
     [[cell songTitle] setText:[_arrayOfTitles objectAtIndex:[indexPath row]]];
     

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface FavTableViewCell : UITableViewCell
+@property IBOutlet UIImageView *image;
 @property IBOutlet UILabel *artist;
 @property IBOutlet UILabel *songTitle;
 @end

@@ -30,6 +30,8 @@
 NSString * const WUV_CACHED_IMAGE_KEY = @"WUV_CACHED_IMAGE_KEY";
 NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
+
+// called when a new song is played, updates the favorite icon
 - (void) isSongFavorited{
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray *arrayOfTitles = [userDefaults objectForKey:@"Title"];
@@ -40,11 +42,12 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         _isFavorited = NO;
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
     }
-
+    [self configureRemoteCommandHandling];
 }
 
-- (IBAction)favoriteSong:(id)sender
+- (void)favoriteSong
 {
+    NSLog(@"wasCalled");
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     
     if(_isFavorited == NO){
@@ -64,7 +67,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 //            [userDefaults setObject:arrayOfImages forKey:@"Image"];
             [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
             [userDefaults setObject:arrayOfTitles forKey:@"Title"];
-            
+            [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(_coverArt.image) forKey:_songTitle.text];
+
             [userDefaults synchronize];
 
         }else{
@@ -79,12 +83,9 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 //            [userDefaults setObject:arrayOfImages forKey:@"Image"];
             [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
             [userDefaults setObject:arrayOfTitles forKey:@"Title"];
-            
+            [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(_coverArt.image) forKey:_songTitle.text];
             [userDefaults synchronize];
         }
-        
-        
-        
     }else/**_isFavorited == YES **/{
         // update the favorite icon
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
@@ -97,6 +98,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 //        [arrayOfImages removeObject:_backgroundImage.image];
         [arrayOfArtists removeObject:_artist.text];
         [arrayOfTitles removeObject:_songTitle.text];
+        [userDefaults removeObjectForKey:_songTitle.text];
         
 //        [userDefaults setObject:arrayOfImages forKey:@"Image"];
         [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
@@ -105,7 +107,12 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         [userDefaults synchronize];
         
     }
+    [self configureRemoteCommandHandling];
+}
 
+- (IBAction)favoriteButton:(id)sender
+{
+    [self favoriteSong];
 }
 
 - (IBAction)share:(id)sender
@@ -205,7 +212,11 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }];
     
     // register to receive remote like/favorite event
-    commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
+    if(_isFavorited == YES){
+        commandCenter.likeCommand.localizedTitle = @"Unfavorite";
+    }else{
+        commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
+    }
     [commandCenter.likeCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         NSLog(@"Mr. Jeffrey, this hook may be of interest to you.");
         // TODO: Implement Logic to figure out if current song is already favorited.
@@ -214,6 +225,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         // After action is complete, localizedTitle should be toggled
         return MPRemoteCommandHandlerStatusSuccess;
     }];
+    NSLog(@"outside");
 }
 
 /* Here we wish to update the now playing info that will be displayed on the lock screen */
@@ -330,6 +342,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         
         _artist.text = currentArtistName;
         _songTitle.text = currentSongTitle;
+        
+        // checks to see if new song has been favorited
         [self isSongFavorited];
         
         // if cache retrieval fails, it will return nil.
