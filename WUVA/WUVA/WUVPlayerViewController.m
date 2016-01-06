@@ -189,6 +189,17 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 }
 
+-(void) viewWillAppear:(BOOL)animated{
+    [super viewWillAppear: YES];
+    [self.navigationController.navigationBar setTranslucent:YES];
+    self.navigationController.view.backgroundColor = [UIColor clearColor];
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [[UIImage alloc] init];
+    self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
+    // the following line causes the status bar to be white
+    [self.navigationController.navigationBar setBarStyle:UIBarStyleBlack];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

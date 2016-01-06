@@ -19,9 +19,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
+    [self.navigationController.navigationBar setTranslucent:NO];
+
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
-//    _arrayOfImages = [userDefaults objectForKey:@"Image"];
     _arrayOfArtists = [userDefaults objectForKey:@"Artist"];
     _arrayOfTitles = [userDefaults objectForKey:@"Title"];
     // Uncomment the following line to preserve selection between presentations.

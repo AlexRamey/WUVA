@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1FC195391C3CD1CD00451BED /* FavCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC195381C3CD1CD00451BED /* FavCollectionViewController.m */; };
+		1FC1953C1C3CD1DC00451BED /* FavCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC1953B1C3CD1DC00451BED /* FavCollectionViewCell.m */; };
+		1FC195401C3CE68D00451BED /* FavDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC1953F1C3CE68D00451BED /* FavDetailViewController.m */; };
 		1FFAACDA1C3CA60E00031911 /* FavTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFAACD91C3CA60E00031911 /* FavTableViewController.m */; };
 		1FFAACDE1C3CA83500031911 /* FavTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFAACDD1C3CA83500031911 /* FavTableViewCell.m */; };
 		D0366D2C1BE0309400CEF5E5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D2B1BE0309400CEF5E5 /* main.m */; };
@@ -29,6 +32,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1FC195371C3CD1CD00451BED /* FavCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavCollectionViewController.h; sourceTree = "<group>"; };
+		1FC195381C3CD1CD00451BED /* FavCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavCollectionViewController.m; sourceTree = "<group>"; };
+		1FC1953A1C3CD1DC00451BED /* FavCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavCollectionViewCell.h; sourceTree = "<group>"; };
+		1FC1953B1C3CD1DC00451BED /* FavCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavCollectionViewCell.m; sourceTree = "<group>"; };
+		1FC1953E1C3CE68D00451BED /* FavDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavDetailViewController.h; sourceTree = "<group>"; };
+		1FC1953F1C3CE68D00451BED /* FavDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavDetailViewController.m; sourceTree = "<group>"; };
 		1FFAACD81C3CA60E00031911 /* FavTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavTableViewController.h; sourceTree = "<group>"; };
 		1FFAACD91C3CA60E00031911 /* FavTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavTableViewController.m; sourceTree = "<group>"; };
 		1FFAACDC1C3CA83500031911 /* FavTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavTableViewCell.h; sourceTree = "<group>"; };
@@ -78,6 +87,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1FC1953D1C3CD1E300451BED /* Favorites2 */ = {
+			isa = PBXGroup;
+			children = (
+				1FC195371C3CD1CD00451BED /* FavCollectionViewController.h */,
+				1FC195381C3CD1CD00451BED /* FavCollectionViewController.m */,
+				1FC1953A1C3CD1DC00451BED /* FavCollectionViewCell.h */,
+				1FC1953B1C3CD1DC00451BED /* FavCollectionViewCell.m */,
+				1FC1953E1C3CE68D00451BED /* FavDetailViewController.h */,
+				1FC1953F1C3CE68D00451BED /* FavDetailViewController.m */,
+			);
+			name = Favorites2;
+			sourceTree = "<group>";
+		};
 		1FFAACDB1C3CA61700031911 /* Favorites */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +132,7 @@
 		D0366D291BE0309400CEF5E5 /* WUVA */ = {
 			isa = PBXGroup;
 			children = (
+				1FC1953D1C3CD1E300451BED /* Favorites2 */,
 				1FFAACDB1C3CA61700031911 /* Favorites */,
 				D04A24B11C3065BF003B4540 /* Delegate */,
 				D04A24B21C3065C5003B4540 /* Player */,
@@ -282,10 +305,13 @@
 			files = (
 				D0366D321BE0309400CEF5E5 /* WUVPlayerViewController.m in Sources */,
 				D0366D2F1BE0309400CEF5E5 /* AppDelegate.m in Sources */,
+				1FC195391C3CD1CD00451BED /* FavCollectionViewController.m in Sources */,
+				1FC195401C3CE68D00451BED /* FavDetailViewController.m in Sources */,
 				1FFAACDE1C3CA83500031911 /* FavTableViewCell.m in Sources */,
 				D04A24A41C304B24003B4540 /* NSString+URL_Encoding.m in Sources */,
 				D04A24AC1C305E8E003B4540 /* UIImageEffects.m in Sources */,
 				D0366D2C1BE0309400CEF5E5 /* main.m in Sources */,
+				1FC1953C1C3CD1DC00451BED /* FavCollectionViewCell.m in Sources */,
 				D04A24A11C2F8C34003B4540 /* WUVRelease.m in Sources */,
 				D04A249E1C2F400C003B4540 /* WUVImageLoader.m in Sources */,
 				1FFAACDA1C3CA60E00031911 /* FavTableViewController.m in Sources */,
