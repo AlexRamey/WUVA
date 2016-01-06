@@ -10,7 +10,6 @@
 #import "WUVImageLoader.h"
 #import "UIImageEffects.h"
 #import <TritonPlayerSDK/TritonPlayerSDK.h>
-@import MediaPlayer;
 
 @interface WUVPlayerViewController () <TritonPlayerDelegate>
 @property (nonatomic, strong) TritonPlayer *tritonPlayer;
@@ -31,7 +30,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 - (IBAction)share:(id)sender
 {
-    NSString *texttoshare = [NSString stringWithFormat: @"Hey check out this awesome song, %@, by %@ I'm listening to on WUVA 92.7", _songTitle.text, _artist.text];
+    NSString *texttoshare = [NSString stringWithFormat: @"Hey check out this awesome song, %@, by %@ I'm listening to on 92.7 Nash Icon", _songTitle.text, _artist.text];
     NSArray *activityItems = @[texttoshare];
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     [self presentViewController:activityVC animated:TRUE completion:nil];
@@ -142,24 +141,20 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     NSMutableDictionary* newInfo = [NSMutableDictionary dictionary];
     
     // Set song title info
-    if (_songTitle.text)
+    if (_songTitle.text && ([_songTitle.text compare:@" "] != NSOrderedSame))
     {
         [newInfo setObject:[NSString stringWithString:_songTitle.text] forKey:MPMediaItemPropertyTitle];
     }
-    else
-    {
-        [newInfo setObject:@" " forKey:MPMediaItemPropertyTitle];
-    }
     
     // Set artist info
-    if (_artist.text && ([_artist.text caseInsensitiveCompare:@"WUVA 92.7"] != NSOrderedSame))
+    if (_artist.text && ([_artist.text caseInsensitiveCompare:@"92.7 Nash Icon"] != NSOrderedSame))
     {
-        NSString *artistInfo = [[NSString stringWithString:_artist.text] stringByAppendingString:@" - WUVA 92.7"];
+        NSString *artistInfo = [[NSString stringWithString:_artist.text] stringByAppendingString:@" - 92.7 Nash Icon"];
         [newInfo setObject:artistInfo forKey:MPMediaItemPropertyArtist];
     }
     else
     {
-        [newInfo setObject:@"WUVA 92.7" forKey:MPMediaItemPropertyArtist];
+        [newInfo setObject:@"92.7 Nash Icon" forKey:MPMediaItemPropertyArtist];
     }
     
     // Set album art info
@@ -180,7 +175,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     [self.coverArt setNeedsDisplay];
     [self updateBackgroundView];
     
-    _artist.text = @"WUVA 92.7";
+    _artist.text = @"92.7 Nash Icon";
     _songTitle.text = @" ";         // make invisible but don't let label collapse
     
     [self configureNowPlayingInfo];
@@ -298,10 +293,12 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         case kTDPlayerStatePlaying:
             NSLog(@"Status: Playing");
             [_play setBackgroundImage:[UIImage imageNamed:@"PauseIcon"] forState:UIControlStateNormal];
+            [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = YES;
             break;
         case kTDPlayerStateStopped:
             NSLog(@"State: Stopped");
              [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
+            [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
             [self showPausedUI];
             break;
         case kTDPlayerStateError:
@@ -310,6 +307,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         case kTDPlayerStatePaused:
             NSLog(@"State: Paused");
             [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
+            [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
             [self showPausedUI];
             break;
         default:
