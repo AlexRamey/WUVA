@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1FFAACDA1C3CA60E00031911 /* FavTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFAACD91C3CA60E00031911 /* FavTableViewController.m */; };
+		1FFAACDE1C3CA83500031911 /* FavTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFAACDD1C3CA83500031911 /* FavTableViewCell.m */; };
 		D0366D2C1BE0309400CEF5E5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D2B1BE0309400CEF5E5 /* main.m */; };
 		D0366D2F1BE0309400CEF5E5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D2E1BE0309400CEF5E5 /* AppDelegate.m */; };
 		D0366D321BE0309400CEF5E5 /* WUVPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0366D311BE0309400CEF5E5 /* WUVPlayerViewController.m */; };
@@ -27,6 +29,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1FFAACD81C3CA60E00031911 /* FavTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavTableViewController.h; sourceTree = "<group>"; };
+		1FFAACD91C3CA60E00031911 /* FavTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavTableViewController.m; sourceTree = "<group>"; };
+		1FFAACDC1C3CA83500031911 /* FavTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavTableViewCell.h; sourceTree = "<group>"; };
+		1FFAACDD1C3CA83500031911 /* FavTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavTableViewCell.m; sourceTree = "<group>"; };
 		D0366D271BE0309400CEF5E5 /* WUVA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WUVA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0366D2B1BE0309400CEF5E5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D0366D2D1BE0309400CEF5E5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -72,6 +78,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1FFAACDB1C3CA61700031911 /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+				1FFAACD81C3CA60E00031911 /* FavTableViewController.h */,
+				1FFAACD91C3CA60E00031911 /* FavTableViewController.m */,
+				1FFAACDC1C3CA83500031911 /* FavTableViewCell.h */,
+				1FFAACDD1C3CA83500031911 /* FavTableViewCell.m */,
+			);
+			name = Favorites;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		D0366D1E1BE0309400CEF5E5 = {
 			isa = PBXGroup;
 			children = (
@@ -92,6 +110,7 @@
 		D0366D291BE0309400CEF5E5 /* WUVA */ = {
 			isa = PBXGroup;
 			children = (
+				1FFAACDB1C3CA61700031911 /* Favorites */,
 				D04A24B11C3065BF003B4540 /* Delegate */,
 				D04A24B21C3065C5003B4540 /* Player */,
 				D04A24AF1C3065AB003B4540 /* Image Loader */,
@@ -263,11 +282,13 @@
 			files = (
 				D0366D321BE0309400CEF5E5 /* WUVPlayerViewController.m in Sources */,
 				D0366D2F1BE0309400CEF5E5 /* AppDelegate.m in Sources */,
+				1FFAACDE1C3CA83500031911 /* FavTableViewCell.m in Sources */,
 				D04A24A41C304B24003B4540 /* NSString+URL_Encoding.m in Sources */,
 				D04A24AC1C305E8E003B4540 /* UIImageEffects.m in Sources */,
 				D0366D2C1BE0309400CEF5E5 /* main.m in Sources */,
 				D04A24A11C2F8C34003B4540 /* WUVRelease.m in Sources */,
 				D04A249E1C2F400C003B4540 /* WUVImageLoader.m in Sources */,
+				1FFAACDA1C3CA60E00031911 /* FavTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
