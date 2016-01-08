@@ -77,6 +77,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
                 
                 for (CuePointEvent *item in historyItems)
                 {
+                    // NSLog(@"%@",item.data);
                     WUVRecentlyPlayedTrackInfo *info = [WUVRecentlyPlayedTrackInfo new];
                     info.songTitle = [item.data objectForKey:@"cue_title"];
                     info.artist = [item.data objectForKey:@"track_artist_name"];
@@ -86,11 +87,16 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
                 // Remove things in _recentlyPlayedItems that are no longer in
                 // the results
                 NSMutableArray *oldItems = [NSMutableArray new];
+                NSMutableArray *carryOverItemsWithoutImageData = [NSMutableArray new];
                 for (WUVRecentlyPlayedTrackInfo *info in _recentlyPlayedItems)
                 {
                     if (![results containsObject:info])
                     {
                         [oldItems addObject:info];
+                    }
+                    else if (info.artwork == nil)
+                    {
+                        [carryOverItemsWithoutImageData addObject:info];
                     }
                 }
                 
@@ -114,7 +120,32 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
                     }
                 }
                 
-                [self loadImages:newItems];
+                // If it's been a while, some items in results that were also initially in
+                // _recentlyPlayedItems may have played again on the radio. This means that
+                // they may wrongly be at the end of the list of _recentlyPlayedItems. To
+                // compensate for this, we will sort _recentlyPlayedItems again according to
+                // the ordering of results to guarantee correct ordering
+                [_recentlyPlayedItems sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                    WUVRecentlyPlayedTrackInfo *info_one = (WUVRecentlyPlayedTrackInfo *)obj1;
+                    WUVRecentlyPlayedTrackInfo *info_two = (WUVRecentlyPlayedTrackInfo *)obj2;
+                    int results_size = (int)[results count];
+                    for (int i = 0; i < results_size; i++)
+                    {
+                        if ([info_one isEqual:results[i]])
+                        {
+                            return NSOrderedAscending;
+                        }
+                        else if ([info_two isEqual:results[i]])
+                        {
+                            return NSOrderedDescending;
+                        }
+                    }
+                    return NSOrderedSame;
+                }];
+                
+                // Furthermore, we wish to attempt to loadImages for all newItems and all
+                // items that don't have image data.
+                [self loadImages:[newItems arrayByAddingObjectsFromArray:carryOverItemsWithoutImageData]];
             }
         });
     }];
@@ -123,7 +154,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
 - (void)loadImages:(NSArray *)RPInfos
 {
     __block int load_counter = (int)[RPInfos count];
-    
+    // NSLog(@"Load Counter: %d", load_counter);
     if (load_counter == 0)
     {
         [self.refreshControl endRefreshing];
