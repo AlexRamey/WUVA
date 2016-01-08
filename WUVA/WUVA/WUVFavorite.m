@@ -36,20 +36,12 @@
 
 - (BOOL)isEqual:(id)other
 {
-    NSLog(@"HERE1");
     if (other == self){
-        NSLog(@"HERE2");
         return YES;
     }
     if (!other || ![other isKindOfClass:[self class]]){
-        NSLog(@"HERE3");
         return NO;
     }
-    NSLog(@"HERE4");
-    NSLog(self.artist);
-    NSLog([other artist]);
-    NSLog(self.title);
-    NSLog([other title]);
 
     return [[self artist] isEqualToString:[other artist]] && [[self title] isEqualToString:[other title]];
     

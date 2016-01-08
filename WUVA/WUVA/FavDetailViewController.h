@@ -12,4 +12,5 @@
 @property UIImage *image;
 @property NSString *artist;
 @property NSString *songTitle;
+@property NSDate *date;
 @end

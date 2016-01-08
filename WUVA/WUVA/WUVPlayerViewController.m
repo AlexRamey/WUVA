@@ -58,9 +58,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 - (void)favoriteSong
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSLog(@"outside of if statement");
-    NSLog(_artist.text);
-    NSLog(_songTitle.text);
     if(_isFavorited == NO){
         NSLog(@"inside favoriting");
         // update the favorite icon
@@ -70,25 +67,19 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         newObject.artist = _artist.text;
         newObject.title = _songTitle.text;
         newObject.date_favorited = [NSDate date];
-        
         newObject.image = UIImagePNGRepresentation(_coverArt.image);
         
-        NSLog(newObject.artist);
-        NSLog(newObject.title);
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
-        NSLog(@"%lu",(unsigned long)objectArray.count);
         if (data == nil)
         {
             objectArray = [NSMutableArray new];
             [objectArray insertObject:newObject atIndex:0];
-            NSLog(@"%lu",(unsigned long)objectArray.count);
         }
         else
         {
             objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
             [objectArray insertObject:newObject atIndex:0];
-            NSLog(@"%lu",(unsigned long)objectArray.count);
 
         }
         [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
@@ -103,8 +94,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         WUVFavorite *deleteObject = [WUVFavorite new];
         deleteObject.artist = _artist.text;
         deleteObject.title = _songTitle.text;
-        NSLog(deleteObject.artist);
-        NSLog(deleteObject.title);
         
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
@@ -205,6 +194,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     // the following line causes the status bar to be white
     [self.navigationController.navigationBar setBarStyle:UIBarStyleBlack];
+    [self updateFavoritesPlayerStateInformationForCurrentSong];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -241,6 +231,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         // If so, localizedTitle should be Unfavorite and this btn should unfavorite it.
         // else, localizedTitle should be Favorite and this btn should favorite it.
         // After action is complete, localizedTitle should be toggled
+        [self favoriteSong];
+        [self updateFavoritesPlayerStateInformationForCurrentSong];
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 }

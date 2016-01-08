@@ -7,18 +7,45 @@
 //
 
 #import "FavDetailViewController.h"
+#import "FavCollectionViewController.h"
+#import "WUVFavorite.h"
 
 @interface FavDetailViewController ()
 @property IBOutlet UIImageView *imageView;
 @property IBOutlet UILabel *artistView;
 @property IBOutlet UILabel *songTitleView;
+@property IBOutlet UILabel *dateView;
 @end
 
 @implementation FavDetailViewController
 
+-(IBAction)remove:(id)sender
+{
+    NSLog(@"called");
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    WUVFavorite *deleteObject = [WUVFavorite new];
+    deleteObject.artist = self.artist;
+    deleteObject.title = self.songTitle;
+    
+    NSMutableArray *objectArray;
+    NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
+    objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+    [objectArray removeObject:(WUVFavorite*) deleteObject];
+    [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
+    [userDefaults synchronize];
+
+
+  [self.navigationController popViewControllerAnimated:YES];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     UIColor *color = [[UIColor alloc] initWithRed:0.0 green:0.0 blue:0.0 alpha:0.9];
+    UIBarButtonItem *removeButton = [[UIBarButtonItem alloc]
+                                   initWithTitle:@"Remove"
+                                     style: UIBarButtonItemStylePlain
+                                   target:self
+                                   action:@selector(remove:)];
+    self.navigationItem.rightBarButtonItem = removeButton;
     [self.view setBackgroundColor:color];
     // Do any additional setup after loading the view.
 }
@@ -35,6 +62,11 @@
     self.songTitleView.text = self.songTitle;
     self.artistView.text = self.artist;
     
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    NSString *dateString = [dateFormatter stringFromDate: self.date];
+    NSString *theDate = [NSString stringWithFormat:@"Favorited on %@", dateString];
+    self.dateView.text = theDate;
 }
 /*
 #pragma mark - Navigation

@@ -41,6 +41,14 @@ static NSString * const reuseIdentifier = @"CCell";
    
     
 }
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
+    _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+    [self.collectionView reloadData];
+    
+    }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -99,6 +107,7 @@ static NSString * const reuseIdentifier = @"CCell";
         detail.image = image;
         detail.artist = current.artist;
         detail.songTitle = current.title;
+        detail.date = current.date_favorited;
         
     }
 }
