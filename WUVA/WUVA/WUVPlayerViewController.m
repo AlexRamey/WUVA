@@ -52,7 +52,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
             [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
         }
     }
-    [self configureRemoteCommandHandling];
+    [self updateRemoteFavoriteIcon];
 }
 
 - (void)favoriteSong
@@ -62,7 +62,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         NSLog(@"inside favoriting");
         // update the favorite icon
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
-        _isFavorited = YES;
         WUVFavorite *newObject = [WUVFavorite new];
         newObject.artist = _artist.text;
         newObject.title = _songTitle.text;
@@ -89,7 +88,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         NSLog(@"inside unfavoriting");
         // update the favorite icon
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
-        _isFavorited = NO;
         
         WUVFavorite *deleteObject = [WUVFavorite new];
         deleteObject.artist = _artist.text;
@@ -101,14 +99,27 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         [objectArray removeObject:(WUVFavorite*) deleteObject];
         [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
         [userDefaults synchronize];
-
     }
-    [self configureRemoteCommandHandling];
+    
+    _isFavorited = !_isFavorited;
+}
+
+- (void)updateRemoteFavoriteIcon
+{
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    commandCenter.likeCommand.active = NO;
+    commandCenter.likeCommand.active = YES;
+    if(_isFavorited == YES){
+        commandCenter.likeCommand.localizedTitle = @"Unfavorite";
+    }else{
+        commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
+    }
 }
 
 - (IBAction)favoriteButton:(id)sender
 {
     [self favoriteSong];
+    [self updateRemoteFavoriteIcon];
 }
 
 - (IBAction)share:(id)sender
@@ -220,11 +231,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }];
     
     // register to receive remote like/favorite event
-    if(_isFavorited == YES){
-        commandCenter.likeCommand.localizedTitle = @"Unfavorite";
-    }else{
-        commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
-    }
+    commandCenter.likeCommand.localizedTitle = @"Fav";
     [commandCenter.likeCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         NSLog(@"Mr. Jeffrey, this hook may be of interest to you.");
         // TODO: Implement Logic to figure out if current song is already favorited.
