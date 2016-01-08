@@ -10,6 +10,7 @@
 #import "WUVImageLoader.h"
 #import "UIImageEffects.h"
 #import <TritonPlayerSDK/TritonPlayerSDK.h>
+#import "WUVFavorite.h"
 
 @interface WUVPlayerViewController () <TritonPlayerDelegate>
 @property (nonatomic, strong) TritonPlayer *tritonPlayer;
@@ -32,80 +33,86 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 
 // called when a new song is played, updates the favorite icon
-- (void) isSongFavorited{
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *arrayOfTitles = [userDefaults objectForKey:@"Title"];
-    if([arrayOfTitles containsObject:_songTitle.text]){
-        _isFavorited = YES;
-        [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
-    }else{
+- (void) updateFavoritesPlayerStateInformationForCurrentSong{
+    NSLog(@"inside issongfavorited");
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
+    if(data == nil){
         _isFavorited = NO;
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
+    }else{
+        WUVFavorite *comparedObject = [[WUVFavorite alloc] init];
+        comparedObject.artist = _artist.text;
+        comparedObject.title = _songTitle.text;
+        NSMutableArray *objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+        if([objectArray containsObject:comparedObject]){
+            _isFavorited = YES;
+            [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
+        }else{
+            _isFavorited = NO;
+            [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
+        }
     }
     [self configureRemoteCommandHandling];
 }
 
 - (void)favoriteSong
 {
-    NSLog(@"wasCalled");
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
+    NSLog(@"outside of if statement");
+    NSLog(_artist.text);
+    NSLog(_songTitle.text);
     if(_isFavorited == NO){
+        NSLog(@"inside favoriting");
         // update the favorite icon
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
         _isFavorited = YES;
-        NSMutableArray *arrayOfTitles = [userDefaults objectForKey:@"Title"];
-        if(arrayOfTitles != nil){
-//            NSMutableArray *arrayOfImages = [userDefaults objectForKey:@"Image"];
-            NSMutableArray *arrayOfArtists = [[userDefaults objectForKey:@"Artist"] mutableCopy];
-            NSMutableArray *arrayOfTitles = [[userDefaults objectForKey:@"Title"] mutableCopy];
-            
-//            [arrayOfImages insertObject:_backgroundImage.image atIndex:0];
-            [arrayOfArtists insertObject:_artist.text atIndex:0];
-            [arrayOfTitles insertObject:_songTitle.text atIndex:0];
-            
-//            [userDefaults setObject:arrayOfImages forKey:@"Image"];
-            [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
-            [userDefaults setObject:arrayOfTitles forKey:@"Title"];
-            [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(_coverArt.image) forKey:_songTitle.text];
-
-            [userDefaults synchronize];
-
-        }else{
-//            NSMutableArray *arrayOfImages = [NSMutableArray new];
-            NSMutableArray *arrayOfArtists = [NSMutableArray new];
-            NSMutableArray *arrayOfTitles = [NSMutableArray new];
-            
-//            [arrayOfImages insertObject:_backgroundImage.image atIndex:0];
-            [arrayOfArtists insertObject:_artist.text atIndex:0];
-            [arrayOfTitles insertObject:_songTitle.text atIndex:0];
-            
-//            [userDefaults setObject:arrayOfImages forKey:@"Image"];
-            [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
-            [userDefaults setObject:arrayOfTitles forKey:@"Title"];
-            [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(_coverArt.image) forKey:_songTitle.text];
-            [userDefaults synchronize];
+        WUVFavorite *newObject = [WUVFavorite new];
+        newObject.artist = _artist.text;
+        newObject.title = _songTitle.text;
+        newObject.date_favorited = [NSDate date];
+        
+        newObject.image = UIImagePNGRepresentation(_coverArt.image);
+        
+        NSLog(newObject.artist);
+        NSLog(newObject.title);
+        NSMutableArray *objectArray;
+        NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
+        NSLog(@"%lu",(unsigned long)objectArray.count);
+        if (data == nil)
+        {
+            objectArray = [NSMutableArray new];
+            [objectArray insertObject:newObject atIndex:0];
+            NSLog(@"%lu",(unsigned long)objectArray.count);
         }
+        else
+        {
+            objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+            [objectArray insertObject:newObject atIndex:0];
+            NSLog(@"%lu",(unsigned long)objectArray.count);
+
+        }
+        [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
+        [userDefaults synchronize];
+
     }else/**_isFavorited == YES **/{
+        NSLog(@"inside unfavoriting");
         // update the favorite icon
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
         _isFavorited = NO;
         
-//        NSMutableArray *arrayOfImages = [userDefaults objectForKey:@"Image"];
-        NSMutableArray *arrayOfArtists = [[userDefaults objectForKey:@"Artist"] mutableCopy];
-        NSMutableArray *arrayOfTitles = [[userDefaults objectForKey:@"Title"] mutableCopy];
+        WUVFavorite *deleteObject = [WUVFavorite new];
+        deleteObject.artist = _artist.text;
+        deleteObject.title = _songTitle.text;
+        NSLog(deleteObject.artist);
+        NSLog(deleteObject.title);
         
-//        [arrayOfImages removeObject:_backgroundImage.image];
-        [arrayOfArtists removeObject:_artist.text];
-        [arrayOfTitles removeObject:_songTitle.text];
-        [userDefaults removeObjectForKey:_songTitle.text];
-        
-//        [userDefaults setObject:arrayOfImages forKey:@"Image"];
-        [userDefaults setObject:arrayOfArtists forKey:@"Artist"];
-        [userDefaults setObject:arrayOfTitles forKey:@"Title"];
-        
+        NSMutableArray *objectArray;
+        NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
+        objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+        [objectArray removeObject:(WUVFavorite*) deleteObject];
+        [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
         [userDefaults synchronize];
-        
+
     }
     [self configureRemoteCommandHandling];
 }
@@ -236,7 +243,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         // After action is complete, localizedTitle should be toggled
         return MPRemoteCommandHandlerStatusSuccess;
     }];
-    NSLog(@"outside");
 }
 
 /* Here we wish to update the now playing info that will be displayed on the lock screen */
@@ -355,7 +361,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         _songTitle.text = currentSongTitle;
         
         // checks to see if new song has been favorited
-        [self isSongFavorited];
+        [self updateFavoritesPlayerStateInformationForCurrentSong];
         
         // if cache retrieval fails, it will return nil.
         _coverArt.image = [self retrieveImageFromCacheForSong:currentSongTitle artist:currentArtistName];

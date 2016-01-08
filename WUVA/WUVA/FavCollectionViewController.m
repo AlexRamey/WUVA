@@ -9,10 +9,10 @@
 #import "FavCollectionViewController.h"
 #import "FavCollectionViewCell.h"
 #import "FavDetailViewController.h"
+#import "WUVFavorite.h"
 
 @interface FavCollectionViewController ()
-@property NSMutableArray *arrayOfArtists;
-@property NSMutableArray *arrayOfTitles;
+@property NSMutableArray *objectArray;
 @end
 
 @implementation FavCollectionViewController
@@ -26,8 +26,10 @@ static NSString * const reuseIdentifier = @"CCell";
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     
-    _arrayOfArtists = [userDefaults objectForKey:@"Artist"];
-    _arrayOfTitles = [userDefaults objectForKey:@"Title"];
+   
+    NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
+    _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+    NSLog(@"%lu",_objectArray.count);
 
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -63,18 +65,19 @@ static NSString * const reuseIdentifier = @"CCell";
 
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return _arrayOfArtists.count;
+    return _objectArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     FavCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
-    NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[_arrayOfTitles objectAtIndex: [indexPath row]]];
-    UIImage* image = [UIImage imageWithData:imageData];
+    
+    WUVFavorite *current = [_objectArray objectAtIndex:[indexPath row]];
+    NSData *imageData = current.image;
+    UIImage *image = [UIImage imageWithData:imageData];
     
     cell.imageView.image = image;
-    cell.artist.text = [_arrayOfArtists objectAtIndex:[indexPath row]];
-    cell.songTitle.text = [_arrayOfTitles objectAtIndex:[indexPath row]];
-
+    cell.artist.text = current.artist;
+    cell.songTitle.text = current.title;
     return cell;
 }
 
@@ -87,13 +90,16 @@ static NSString * const reuseIdentifier = @"CCell";
         NSIndexPath *selectedIndexPath = [self.collectionView indexPathsForSelectedItems][0];
         NSLog(@"%li", [selectedIndexPath row]);
       
-        NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:[_arrayOfTitles objectAtIndex: [selectedIndexPath row]]];
-        UIImage* image = [UIImage imageWithData:imageData];
+        WUVFavorite *current = [_objectArray objectAtIndex:[selectedIndexPath row]];
+        NSData *imageData = current.image;
+        UIImage *image =[UIImage imageWithData:imageData];
+        
         FavDetailViewController *detail = segue.destinationViewController;
+        
         detail.image = image;
-        detail.artist =[_arrayOfArtists objectAtIndex:[selectedIndexPath row]];
-        detail.songTitle =[_arrayOfTitles objectAtIndex:[selectedIndexPath row]];
-
+        detail.artist = current.artist;
+        detail.songTitle = current.title;
+        
     }
 }
 

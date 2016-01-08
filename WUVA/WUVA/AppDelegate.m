@@ -42,4 +42,13 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+//+ (void) initialize{
+//    
+//    NSDictionary *defaults = @{
+//                               @"WUV_FAVORITES_KEY" :
+//                               };
+//    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+//    
+//}
+
 @end
