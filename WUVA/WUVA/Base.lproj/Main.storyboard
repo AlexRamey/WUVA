@@ -5,6 +5,7 @@
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -95,12 +96,19 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="TM3-dk-0EQ">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="dnG-cn-v7x">
-                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                            <connections>
-                                <action selector="share:" destination="BYZ-38-t0r" id="DFr-DX-KYi"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="action" id="dnG-cn-v7x">
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="share:" destination="BYZ-38-t0r" id="DFr-DX-KYi"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="RP" id="vT9-va-Feb">
+                                <connections>
+                                    <segue destination="FRj-Le-0Fu" kind="show" id="iRa-y1-geR"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
@@ -113,6 +121,114 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="245" y="188"/>
+        </scene>
+        <!--Recently Played Controller-->
+        <scene sceneID="weH-3v-F5c">
+            <objects>
+                <tableViewController id="FRj-Le-0Fu" customClass="WUVRecentlyPlayedController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="7ZW-0J-OVx">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="rp_cell" rowHeight="85" id="J8t-WO-2uy" customClass="WUVRPTableViewCell">
+                                <rect key="frame" x="0.0" y="92" width="320" height="85"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="J8t-WO-2uy" id="uQa-tw-MFV">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="84"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.75" translatesAutoresizingMaskIntoConstraints="NO" id="ID7-uy-a64">
+                                            <rect key="frame" x="86" y="42" width="216" height="19"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="216" id="O1X-dw-Q5Q"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="O1X-dw-Q5Q"/>
+                                                </mask>
+                                            </variation>
+                                        </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SMM-pI-MuC">
+                                            <rect key="frame" x="8" y="8" width="68" height="68"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="SMM-pI-MuC" secondAttribute="height" multiplier="1:1" id="0iL-aD-xfr"/>
+                                                <constraint firstAttribute="width" constant="68" id="Vj6-Cb-Mnu"/>
+                                                <constraint firstAttribute="height" constant="68" id="hSP-VF-nzx"/>
+                                            </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="Vj6-Cb-Mnu"/>
+                                                    <exclude reference="hSP-VF-nzx"/>
+                                                </mask>
+                                            </variation>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.75" translatesAutoresizingMaskIntoConstraints="NO" id="pcl-Rq-AMm">
+                                            <rect key="frame" x="86" y="13" width="216" height="19"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="216" id="rYL-UE-M3j"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="16"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="rYL-UE-M3j"/>
+                                                </mask>
+                                            </variation>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailingMargin" secondItem="pcl-Rq-AMm" secondAttribute="trailing" constant="10" id="3dU-0l-BfZ"/>
+                                        <constraint firstItem="ID7-uy-a64" firstAttribute="top" secondItem="pcl-Rq-AMm" secondAttribute="bottom" constant="10" id="BAX-07-Lv6"/>
+                                        <constraint firstItem="pcl-Rq-AMm" firstAttribute="top" secondItem="uQa-tw-MFV" secondAttribute="topMargin" constant="5" id="Cq5-KO-3sv"/>
+                                        <constraint firstItem="SMM-pI-MuC" firstAttribute="top" secondItem="uQa-tw-MFV" secondAttribute="topMargin" id="Ifp-bW-0wt"/>
+                                        <constraint firstItem="ID7-uy-a64" firstAttribute="leading" secondItem="SMM-pI-MuC" secondAttribute="trailing" constant="10" id="PBb-vN-rdJ"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="ID7-uy-a64" secondAttribute="bottom" constant="7.5" id="VWk-gi-99F"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="ID7-uy-a64" secondAttribute="trailing" constant="10" id="ad4-aO-bf0"/>
+                                        <constraint firstItem="SMM-pI-MuC" firstAttribute="bottom" secondItem="uQa-tw-MFV" secondAttribute="bottomMargin" id="d47-Wo-cWO"/>
+                                        <constraint firstItem="ID7-uy-a64" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" constant="27" id="fVv-zx-Hhf"/>
+                                        <constraint firstItem="pcl-Rq-AMm" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" constant="27" id="mJ1-VW-SNd"/>
+                                        <constraint firstItem="SMM-pI-MuC" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" id="vXe-ty-wf7"/>
+                                        <constraint firstItem="pcl-Rq-AMm" firstAttribute="leading" secondItem="SMM-pI-MuC" secondAttribute="trailing" constant="10" id="yHG-7Z-4GW"/>
+                                    </constraints>
+                                    <variation key="default">
+                                        <mask key="constraints">
+                                            <exclude reference="mJ1-VW-SNd"/>
+                                            <exclude reference="VWk-gi-99F"/>
+                                            <exclude reference="fVv-zx-Hhf"/>
+                                        </mask>
+                                    </variation>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="SMM-pI-MuC" secondAttribute="height" multiplier="80:17" id="1jx-IX-wG1"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="1jx-IX-wG1"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <outlet property="artist" destination="pcl-Rq-AMm" id="tZ5-Kp-gZx"/>
+                                    <outlet property="coverArt" destination="SMM-pI-MuC" id="p9S-y3-XOv"/>
+                                    <outlet property="songTitle" destination="ID7-uy-a64" id="ys6-41-qwp"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="FRj-Le-0Fu" id="CTZ-VQ-HPb"/>
+                            <outlet property="delegate" destination="FRj-Le-0Fu" id="DK5-eU-Dkk"/>
+                        </connections>
+                    </tableView>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c1B-k9-8aQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="625" y="-433"/>
         </scene>
     </scenes>
 </document>

@@ -27,6 +27,7 @@
 
 NSString * const WUV_CACHED_IMAGE_KEY = @"WUV_CACHED_IMAGE_KEY";
 NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
+const int WUV_STREAM_LAG_SECONDS = 0;
 
 - (IBAction)share:(id)sender
 {
@@ -171,7 +172,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 }
 
 /* This method updates the UI and NowPlayingInfo for the paused (or stopped) state */
-- (void)showPausedUI
+- (void)showDefaults
 {
     self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
     [self.coverArt setNeedsDisplay];
@@ -230,17 +231,45 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     
     [[NSUserDefaults standardUserDefaults] setObject:[song stringByAppendingString:artist] forKey:WUV_CACHED_IMAGE_ID_KEY];
     [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(image) forKey:WUV_CACHED_IMAGE_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
+/*
+-(long)timeUntilSongFinishes:(NSDictionary *)trackEventData
+{
+    // determine UNIX start time in seconds
+    long long start_time = [(trackEventData[@"cue_time_start"]) longLongValue];
+    start_time /= 1000;
+    start_time += WUV_STREAM_LAG_SECONDS;
+    
+    // determine duration in seconds
+    NSString *duration = trackEventData[@"cue_time_duration"];
+    NSInteger colon_location = [duration rangeOfString:@":" ].location;
+    NSInteger dot_location = [duration rangeOfString:@"."].location;
+    NSInteger minutes = [[duration substringWithRange:NSMakeRange(0, colon_location)] intValue];
+    NSInteger seconds = [[duration substringWithRange:NSMakeRange(colon_location + 1, dot_location - colon_location - 1)] intValue];
+    NSInteger total_duration = (60 * minutes) + seconds;
+    
+    // determine UNIX current time in seconds
+    NSInteger current_time = (long)([[NSDate date] timeIntervalSince1970] + .5);
+    
+    NSLog(@"Start Time: %lld", start_time);
+    NSLog(@"Current Time: %ld", (long)current_time);
+    
+    return (long)(start_time + total_duration - current_time);
+}
+*/
 #pragma mark TritonPlayerDelegate methods
 
 - (void)player:(TritonPlayer *)player didReceiveCuePointEvent:(CuePointEvent *)cuePointEvent {
-    NSLog(@"Received CuePoint: %@", cuePointEvent);
+    // NSLog(@"Received CuePoint: %@", cuePointEvent.data);
     // Check if it's an ad or track cue point
-    if ([cuePointEvent.type isEqualToString:EventTypeAd]) {
+    if ([cuePointEvent.type isEqualToString:EventTypeAd])
+    {
         // Handle ad information (ex. pass to TDBannerView to render companion banner)
         NSLog(@"Ad Cue Point!");
-    } else if ([cuePointEvent.type isEqualToString:EventTypeTrack]) {
+    }
+    else if ([cuePointEvent.type isEqualToString:EventTypeTrack])
+    {
         NSString *currentSongTitle = [cuePointEvent.data
                                       objectForKey:CommonCueTitleKey];
         NSString *currentArtistName = [cuePointEvent.data
@@ -263,6 +292,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         {
             [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    
                     if (!release)
                     {
                         // load default
@@ -302,7 +332,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
             NSLog(@"State: Stopped");
              [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
-            [self showPausedUI];
+            [self showDefaults];
             break;
         case kTDPlayerStateError:
             NSLog(@"State: Error");
@@ -311,7 +341,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
             NSLog(@"State: Paused");
             [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
-            [self showPausedUI];
+            [self showDefaults];
             break;
         default:
             break;

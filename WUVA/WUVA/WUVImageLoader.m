@@ -85,7 +85,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
     
     brainz_url = [brainz_url stringByAppendingString:@"&limit=10"];
     
-    NSLog(@"Brainz-URL %@", brainz_url);
+    // NSLog(@"Brainz-URL %@", brainz_url);
     
     [[_session dataTaskWithURL:[NSURL URLWithString:brainz_url] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error){
         if (data)

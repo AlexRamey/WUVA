@@ -24,6 +24,9 @@
 		D04A24A91C305E14003B4540 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04A24A81C305E14003B4540 /* Accelerate.framework */; };
 		D04A24AC1C305E8E003B4540 /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = D04A24AB1C305E8E003B4540 /* UIImageEffects.m */; };
 		D077024F1C306A0400E339FD /* TritonPlayerSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D077024E1C306A0400E339FD /* TritonPlayerSDK.framework */; };
+		D07702581C3ED4EF00E339FD /* WUVRecentlyPlayedController.m in Sources */ = {isa = PBXBuildFile; fileRef = D07702571C3ED4EF00E339FD /* WUVRecentlyPlayedController.m */; };
+		D077025C1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D077025B1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m */; };
+		D077025F1C3F4D0300E339FD /* WUVRPTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D077025E1C3F4D0300E339FD /* WUVRPTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +55,12 @@
 		D04A24AA1C305E8E003B4540 /* UIImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImageEffects.h; sourceTree = "<group>"; };
 		D04A24AB1C305E8E003B4540 /* UIImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImageEffects.m; sourceTree = "<group>"; };
 		D077024E1C306A0400E339FD /* TritonPlayerSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TritonPlayerSDK.framework; sourceTree = "<group>"; };
+		D07702561C3ED4EF00E339FD /* WUVRecentlyPlayedController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUVRecentlyPlayedController.h; sourceTree = "<group>"; };
+		D07702571C3ED4EF00E339FD /* WUVRecentlyPlayedController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUVRecentlyPlayedController.m; sourceTree = "<group>"; };
+		D077025A1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUVRecentlyPlayedTrackInfo.h; sourceTree = "<group>"; };
+		D077025B1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUVRecentlyPlayedTrackInfo.m; sourceTree = "<group>"; };
+		D077025D1C3F4D0300E339FD /* WUVRPTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUVRPTableViewCell.h; sourceTree = "<group>"; };
+		D077025E1C3F4D0300E339FD /* WUVRPTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUVRPTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +112,7 @@
 				D0366D381BE0309400CEF5E5 /* LaunchScreen.storyboard */,
 				D0366D3B1BE0309400CEF5E5 /* Info.plist */,
 				D0366D2A1BE0309400CEF5E5 /* Supporting Files */,
+				D07702591C3ED4F500E339FD /* Recently Played */,
 			);
 			path = WUVA;
 			sourceTree = "<group>";
@@ -159,6 +169,8 @@
 		D04A24B01C3065B4003B4540 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D077025A1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.h */,
+				D077025B1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m */,
 				D04A249F1C2F8C34003B4540 /* WUVRelease.h */,
 				D04A24A01C2F8C34003B4540 /* WUVRelease.m */,
 			);
@@ -189,6 +201,17 @@
 				D0366D331BE0309400CEF5E5 /* Main.storyboard */,
 			);
 			name = Storyboard;
+			sourceTree = "<group>";
+		};
+		D07702591C3ED4F500E339FD /* Recently Played */ = {
+			isa = PBXGroup;
+			children = (
+				D07702561C3ED4EF00E339FD /* WUVRecentlyPlayedController.h */,
+				D07702571C3ED4EF00E339FD /* WUVRecentlyPlayedController.m */,
+				D077025D1C3F4D0300E339FD /* WUVRPTableViewCell.h */,
+				D077025E1C3F4D0300E339FD /* WUVRPTableViewCell.m */,
+			);
+			name = "Recently Played";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -265,9 +288,12 @@
 				D0366D2F1BE0309400CEF5E5 /* AppDelegate.m in Sources */,
 				D04A24A41C304B24003B4540 /* NSString+URL_Encoding.m in Sources */,
 				D04A24AC1C305E8E003B4540 /* UIImageEffects.m in Sources */,
+				D077025C1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m in Sources */,
 				D0366D2C1BE0309400CEF5E5 /* main.m in Sources */,
 				D04A24A11C2F8C34003B4540 /* WUVRelease.m in Sources */,
 				D04A249E1C2F400C003B4540 /* WUVImageLoader.m in Sources */,
+				D07702581C3ED4EF00E339FD /* WUVRecentlyPlayedController.m in Sources */,
+				D077025F1C3F4D0300E339FD /* WUVRPTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
