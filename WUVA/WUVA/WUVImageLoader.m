@@ -98,7 +98,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
         }
         else
         {
-            NSLog(@"No Data!");
+            // NSLog(@"No Data!");
             completion(nil,nil);
         }
     }] resume];

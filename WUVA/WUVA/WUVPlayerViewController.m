@@ -423,7 +423,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     if ([cuePointEvent.type isEqualToString:EventTypeAd])
     {
         // Handle ad information (ex. pass to TDBannerView to render companion banner)
-        NSLog(@"Ad Cue Point!");
+        // NSLog(@"Ad Cue Point!");
     }
     else if ([cuePointEvent.type isEqualToString:EventTypeTrack])
     {
@@ -461,7 +461,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
                         [self configureNowPlayingInfo];
                         [self updateBackgroundView];
                         
-                        if (error){NSLog(@"%@", error);}
+                        // if (error){NSLog(@"%@", error);}
                     }
                     else
                     {
@@ -481,25 +481,25 @@ const int WUV_STREAM_LAG_SECONDS = 0;
 -(void)player:(TritonPlayer *)player didChangeState:(TDPlayerState)state {
     switch (state) {
         case kTDPlayerStateConnecting:
-            NSLog(@"State: Connecting");
+            // NSLog(@"State: Connecting");
             break;
         case kTDPlayerStatePlaying:
-            NSLog(@"Status: Playing");
+            // NSLog(@"Status: Playing");
             [_play setBackgroundImage:[UIImage imageNamed:@"PauseIcon"] forState:UIControlStateNormal];
             [_favorite setEnabled:YES];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = YES;
             break;
         case kTDPlayerStateStopped:
-            NSLog(@"State: Stopped");
+            // NSLog(@"State: Stopped");
              [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
             [self showDefaults];
             break;
         case kTDPlayerStateError:
-            NSLog(@"State: Error");
+            // NSLog(@"State: Error");
             break;
         case kTDPlayerStatePaused:
-            NSLog(@"State: Paused");
+            // NSLog(@"State: Paused");
             [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = NO;
             [self showDefaults];
@@ -513,21 +513,21 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     
     switch (info) {
         case kTDPlayerInfoConnectedToStream:
-            NSLog(@"Connected to stream");
+            // NSLog(@"Connected to stream");
             break;
             
         case kTDPlayerInfoBuffering:
-            NSLog(@"Buffering %@%%...", extra[InfoBufferingPercentageKey]);
+            // NSLog(@"Buffering %@%%...", extra[InfoBufferingPercentageKey]);
             break;
             
         case kTDPlayerInfoForwardedToAlternateMount:
-            NSLog(@"Forwarded to an alternate mount: %@", extra[InfoAlternateMountNameKey]);
+            // NSLog(@"Forwarded to an alternate mount: %@", extra[InfoAlternateMountNameKey]);
             break;
     }
 }
 
 - (void)playerBeginInterruption:(TritonPlayer *) player {
-    NSLog(@"playerBeginInterruption");
+    // NSLog(@"playerBeginInterruption");
     if ([self.tritonPlayer isExecuting]) {
         [self.tritonPlayer stop];
         self.interruptedOnPlayback = @YES;
@@ -535,9 +535,9 @@ const int WUV_STREAM_LAG_SECONDS = 0;
 }
 
 - (void)playerEndInterruption:(TritonPlayer *) player {
-    NSLog(@"playerEndInterruption");
+    // NSLog(@"playerEndInterruption");
     if ([self.interruptedOnPlayback boolValue] && player.shouldResumePlaybackAfterInterruption) {
-        NSLog(@"Resume Stream!");
+        // NSLog(@"Resume Stream!");
         // Resume stream
         [self.tritonPlayer play];
         self.interruptedOnPlayback = @NO;

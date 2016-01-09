@@ -68,7 +68,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error)
             {
-                NSLog(@"ERROR: %@", error);
+                // NSLog(@"ERROR: %@", error);
                 [self.refreshControl endRefreshing];
             }
             else
@@ -169,7 +169,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
             
             if (error)
             {
-                NSLog(@"error: %@", error);
+                // NSLog(@"error: %@", error);
                 info.artwork = nil;
             }
             else
