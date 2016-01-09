@@ -22,7 +22,7 @@
 @property (nonatomic, weak) IBOutlet UILabel *artist;
 @property (nonatomic, weak) IBOutlet UILabel *songTitle;
 @property (nonatomic, weak) IBOutlet UIButton *favorite;
-@property BOOL isFavorited;
+@property BOOL isCurrentlyPlayingSongFavorited;
 @end
 
 
@@ -33,22 +33,28 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 
 // called when a new song is played, updates the favorite icon
-- (void) updateFavoritesPlayerStateInformationForCurrentSong{
-    NSLog(@"inside issongfavorited");
+- (void) updateFavoritesPlayerStateInformationForCurrentSong
+{
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
-    if(data == nil){
-        _isFavorited = NO;
+    if(data == nil)
+    {
+        _isCurrentlyPlayingSongFavorited = NO;
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
-    }else{
+    }
+    else
+    {
         WUVFavorite *comparedObject = [[WUVFavorite alloc] init];
         comparedObject.artist = _artist.text;
         comparedObject.title = _songTitle.text;
         NSMutableArray *objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
-        if([objectArray containsObject:comparedObject]){
-            _isFavorited = YES;
+        if([objectArray containsObject:comparedObject])
+        {
+            _isCurrentlyPlayingSongFavorited = YES;
             [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
-        }else{
-            _isFavorited = NO;
+        }
+        else
+        {
+            _isCurrentlyPlayingSongFavorited = NO;
             [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
         }
     }
@@ -58,10 +64,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 - (void)favoriteSong
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if(_isFavorited == NO){
-        NSLog(@"inside favoriting");
-        // update the favorite icon
-        [_favorite setBackgroundImage:[UIImage imageNamed:@"Favorite"] forState:UIControlStateNormal];
+    if(_isCurrentlyPlayingSongFavorited == NO)
+    {
         WUVFavorite *newObject = [WUVFavorite new];
         newObject.artist = _artist.text;
         newObject.title = _songTitle.text;
@@ -84,11 +88,9 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
         [userDefaults synchronize];
 
-    }else/**_isFavorited == YES **/{
-        NSLog(@"inside unfavoriting");
-        // update the favorite icon
-        [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
-        
+    }
+    else/**_isFavorited == YES **/
+    {
         WUVFavorite *deleteObject = [WUVFavorite new];
         deleteObject.artist = _artist.text;
         deleteObject.title = _songTitle.text;
@@ -96,12 +98,10 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
         objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
-        [objectArray removeObject:(WUVFavorite*) deleteObject];
+        [objectArray removeObject:(WUVFavorite*)deleteObject];
         [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
         [userDefaults synchronize];
     }
-    
-    _isFavorited = !_isFavorited;
 }
 
 - (void)updateRemoteFavoriteIcon
@@ -109,22 +109,36 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
     commandCenter.likeCommand.active = NO;
     commandCenter.likeCommand.active = YES;
-    if(_isFavorited == YES){
+    if(_isCurrentlyPlayingSongFavorited == YES)
+    {
         commandCenter.likeCommand.localizedTitle = @"Unfavorite";
-    }else{
+    }
+    else
+    {
         commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
     }
 }
 
 - (IBAction)favoriteButton:(id)sender
 {
-    [self favoriteSong];
-    [self updateRemoteFavoriteIcon];
+    if ([_tritonPlayer isExecuting])
+    {
+        [self favoriteSong];
+        [self updateFavoritesPlayerStateInformationForCurrentSong];
+    }
 }
 
 - (IBAction)share:(id)sender
 {
-    NSString *texttoshare = [NSString stringWithFormat: @"Hey check out this awesome song, %@, by %@ I'm listening to on 92.7 Nash Icon", _songTitle.text, _artist.text];
+    NSString *texttoshare;
+    if (_songTitle.text && ([_songTitle.text compare:@" "] != NSOrderedSame))
+    {
+        texttoshare = [NSString stringWithFormat: @"Hey check out this awesome song, %@, by %@ I'm listening to on 92.7 Nash Icon", _songTitle.text, _artist.text];
+    }
+    else
+    {
+        texttoshare = @"Hey check out 92.7 Nash Icon, available now on your mobile device!";
+    }
     NSArray *activityItems = @[texttoshare];
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     [self presentViewController:activityVC animated:TRUE completion:nil];
@@ -196,7 +210,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
 
 }
 
--(void) viewWillAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear: YES];
     [self.navigationController.navigationBar setTranslucent:YES];
     self.navigationController.view.backgroundColor = [UIColor clearColor];
@@ -205,7 +220,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     // the following line causes the status bar to be white
     [self.navigationController.navigationBar setBarStyle:UIBarStyleBlack];
-    [self updateFavoritesPlayerStateInformationForCurrentSong];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -231,13 +245,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }];
     
     // register to receive remote like/favorite event
-    commandCenter.likeCommand.localizedTitle = @"Fav";
+    commandCenter.likeCommand.localizedTitle = @"Add to Favorites";
     [commandCenter.likeCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        NSLog(@"Mr. Jeffrey, this hook may be of interest to you.");
-        // TODO: Implement Logic to figure out if current song is already favorited.
-        // If so, localizedTitle should be Unfavorite and this btn should unfavorite it.
-        // else, localizedTitle should be Favorite and this btn should favorite it.
-        // After action is complete, localizedTitle should be toggled
         [self favoriteSong];
         [self updateFavoritesPlayerStateInformationForCurrentSong];
         return MPRemoteCommandHandlerStatusSuccess;
@@ -257,7 +266,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     }
     
     // Set artist info
-    if (_artist.text && ([_artist.text caseInsensitiveCompare:@"92.7 Nash Icon"] != NSOrderedSame))
+    if (_artist.text && ([_artist.text compare:@"92.7 Nash Icon"] != NSOrderedSame))
     {
         NSString *artistInfo = [[NSString stringWithString:_artist.text] stringByAppendingString:@" - 92.7 Nash Icon"];
         [newInfo setObject:artistInfo forKey:MPMediaItemPropertyArtist];
@@ -289,6 +298,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     
     _artist.text = @"92.7 Nash Icon";
     _songTitle.text = @" ";         // make invisible but don't let label collapse
+    [_favorite setEnabled:NO];
     
     [self configureNowPlayingInfo];
 }
@@ -409,6 +419,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         case kTDPlayerStatePlaying:
             NSLog(@"Status: Playing");
             [_play setBackgroundImage:[UIImage imageNamed:@"PauseIcon"] forState:UIControlStateNormal];
+            [_favorite setEnabled:YES];
             [MPRemoteCommandCenter sharedCommandCenter].likeCommand.enabled = YES;
             break;
         case kTDPlayerStateStopped:

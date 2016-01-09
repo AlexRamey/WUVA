@@ -21,7 +21,6 @@
 
 -(IBAction)remove:(id)sender
 {
-    NSLog(@"called");
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     WUVFavorite *deleteObject = [WUVFavorite new];
     deleteObject.artist = self.artist;
@@ -34,20 +33,20 @@
     [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
     [userDefaults synchronize];
 
-
-  [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
-- (void)viewDidLoad {
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     UIColor *color = [[UIColor alloc] initWithRed:0.0 green:0.0 blue:0.0 alpha:0.9];
     UIBarButtonItem *removeButton = [[UIBarButtonItem alloc]
-                                   initWithTitle:@"Remove"
-                                     style: UIBarButtonItemStylePlain
-                                   target:self
-                                   action:@selector(remove:)];
+                                        initWithTitle:@"Remove"
+                                        style: UIBarButtonItemStylePlain
+                                        target:self
+                                        action:@selector(remove:)];
     self.navigationItem.rightBarButtonItem = removeButton;
     [self.view setBackgroundColor:color];
-    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
@@ -63,7 +62,7 @@
     self.artistView.text = self.artist;
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    [dateFormatter setDateFormat:@"MM/dd/yyyy"];
     NSString *dateString = [dateFormatter stringFromDate: self.date];
     NSString *theDate = [NSString stringWithFormat:@"Favorited on %@", dateString];
     self.dateView.text = theDate;

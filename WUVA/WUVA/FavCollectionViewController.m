@@ -19,7 +19,8 @@
 
 static NSString * const reuseIdentifier = @"CCell";
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [self.navigationController.navigationBar setTranslucent:NO];
@@ -41,14 +42,13 @@ static NSString * const reuseIdentifier = @"CCell";
    
     
 }
--(void) viewWillAppear:(BOOL)animated
+-(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
     _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
     [self.collectionView reloadData];
-    
-    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -82,10 +82,10 @@ static NSString * const reuseIdentifier = @"CCell";
     WUVFavorite *current = [_objectArray objectAtIndex:[indexPath row]];
     NSData *imageData = current.image;
     UIImage *image = [UIImage imageWithData:imageData];
-    
     cell.imageView.image = image;
     cell.artist.text = current.artist;
     cell.songTitle.text = current.title;
+    
     return cell;
 }
 
@@ -108,7 +108,6 @@ static NSString * const reuseIdentifier = @"CCell";
         detail.artist = current.artist;
         detail.songTitle = current.title;
         detail.date = current.date_favorited;
-        
     }
 }
 
