@@ -221,6 +221,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     // the following line causes the status bar to be white
     [self.navigationController.navigationBar setBarStyle:UIBarStyleBlack];
+    [self updateFavoritesPlayerStateInformationForCurrentSong];
 }
 
 - (void)didReceiveMemoryWarning {
