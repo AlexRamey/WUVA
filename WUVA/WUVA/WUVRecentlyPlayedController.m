@@ -230,7 +230,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 66.0;
+    return 70.0;
 }
 
 

@@ -11,7 +11,7 @@
 #import "FavDetailViewController.h"
 #import "WUVFavorite.h"
 
-@interface FavCollectionViewController ()
+@interface FavCollectionViewController () <UICollectionViewDelegateFlowLayout>
 @property NSMutableArray *objectArray;
 @end
 
@@ -22,31 +22,20 @@ static NSString * const reuseIdentifier = @"CCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    [self.navigationController.navigationBar setTranslucent:NO];
-    
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
-   
-    NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
-    _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
-    NSLog(@"%lu",_objectArray.count);
-
-    // Uncomment the following line to preserve selection between presentations
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Register cell classes
-    //[self.collectionView registerClass:[FavCollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
-    
-    // Do any additional setup after loading the view.
-   
-    
 }
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
-    _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+    if (data)
+    {
+        _objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+    }
+    else
+    {
+        _objectArray = [NSMutableArray new];
+    }
     [self.collectionView reloadData];
 }
 
@@ -89,14 +78,22 @@ static NSString * const reuseIdentifier = @"CCell";
     return cell;
 }
 
-#pragma mark <UICollectionViewDelegate>
+#pragma mark <UICollectionViewDelegateFlowLayout>
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    // We wish to return the maximum cell size that allows two cells to be on a row
+    // given the screen size, 8 pt insets, and 10 pt spacing between cells
+    CGFloat totalWidth = collectionView.frame.size.width;
+    CGFloat cellDimension = (totalWidth - 16.0 - 10.0) / 2.0;
+    return CGSizeMake(cellDimension, cellDimension);
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"showDetail"])
     {
         NSIndexPath *selectedIndexPath = [self.collectionView indexPathsForSelectedItems][0];
-        NSLog(@"%li", [selectedIndexPath row]);
       
         WUVFavorite *current = [_objectArray objectAtIndex:[selectedIndexPath row]];
         NSData *imageData = current.image;

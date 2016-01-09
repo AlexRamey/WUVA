@@ -39,14 +39,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIColor *color = [[UIColor alloc] initWithRed:0.0 green:0.0 blue:0.0 alpha:0.9];
     UIBarButtonItem *removeButton = [[UIBarButtonItem alloc]
                                         initWithTitle:@"Remove"
                                         style: UIBarButtonItemStylePlain
                                         target:self
                                         action:@selector(remove:)];
     self.navigationItem.rightBarButtonItem = removeButton;
-    [self.view setBackgroundColor:color];
 }
 
 - (void)didReceiveMemoryWarning {
