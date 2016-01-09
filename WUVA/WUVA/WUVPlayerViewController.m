@@ -103,6 +103,10 @@ const int WUV_STREAM_LAG_SECONDS = 0;
         [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:objectArray] forKey:@"WUV_FAVORITES_KEY"];
         [userDefaults synchronize];
     }
+    
+    // quick fix to make favorites refresh after action from the control center
+    UINavigationController *vc = self.tabBarController.viewControllers[1];
+    [vc.viewControllers[0] viewWillAppear:YES];
 }
 
 - (void)updateRemoteFavoriteIcon
