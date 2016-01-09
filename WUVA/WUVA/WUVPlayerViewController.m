@@ -221,7 +221,6 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     _artist.textColor = [UIColor whiteColor];
     _songTitle.textColor = [UIColor whiteColor];
     [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
-
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -510,6 +509,10 @@ const int WUV_STREAM_LAG_SECONDS = 0;
             break;
         case kTDPlayerStateError:
             // NSLog(@"State: Error");
+            // quick fix for the "invisible play button" after player initially
+            // fails to connect (like when user is in airplane mode when they launch
+            // the app
+            [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             break;
         case kTDPlayerStatePaused:
             // NSLog(@"State: Paused");
