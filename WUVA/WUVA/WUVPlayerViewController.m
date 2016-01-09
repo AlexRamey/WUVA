@@ -282,12 +282,47 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     // Set album art info
     if (_coverArt.image)
     {
-        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:_coverArt.image];
+        UIImage *lockscreenArt = [self overlayImageOnItsBlurredSelf:_coverArt.image];
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:lockscreenArt];
         [newInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
     }
     
     // Update the now playing info
     info.nowPlayingInfo = newInfo;
+}
+
+-(UIImage *)overlayImageOnItsBlurredSelf:(UIImage *)foreground
+{
+    // This is the path that we will cut out of the foreground image to form the maskImage
+    UIBezierPath *circlePath = [UIBezierPath bezierPath];
+    [circlePath addArcWithCenter:CGPointMake(foreground.size.width / 2.0, foreground.size.height / 2.0) radius:(foreground.size.width / 4.0) startAngle:0 endAngle:2 * M_PI clockwise:YES];
+    
+    // Create an image context containing the original UIImage.
+    UIGraphicsBeginImageContext(foreground.size);
+    [foreground drawAtPoint:CGPointZero];
+    
+    // Clip to the bezier path and clear that portion of the image.
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextAddPath(context,circlePath.CGPath);
+    CGContextClip(context);
+    CGContextClearRect(context,CGRectMake(0,0,foreground.size.width,foreground.size.height));
+                       
+    // Build a new UIImage from the image context.
+    CGImageRef maskImage = CGBitmapContextCreateImage(UIGraphicsGetCurrentContext());
+    UIGraphicsEndImageContext();
+    
+    // Overlay the foreground image on top of its blurred self, using maskImage to
+    // specify which parts to blur. (all but central circle in this case).
+    UIColor *tintColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:.60];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:foreground withRadius:64 tintColor:tintColor saturationDeltaFactor:2.0 maskImage:[UIImage imageWithCGImage:maskImage]];
+    CGImageRelease(maskImage);
+    UIGraphicsBeginImageContextWithOptions(backgroundImage.size, NO, 0.0);
+    [backgroundImage drawInRect:CGRectMake(0, 0, backgroundImage.size.width, backgroundImage.size.height)];
+    [foreground drawInRect:CGRectMake(0.0, 0.0, foreground.size.width, foreground.size.height)];
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return result;
 }
 
 /* This method updates the UI and NowPlayingInfo for the paused (or stopped) state */
