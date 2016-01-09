@@ -71,7 +71,16 @@ const int WUV_STREAM_LAG_SECONDS = 0;
         newObject.artist = _artist.text;
         newObject.title = _songTitle.text;
         newObject.date_favorited = [NSDate date];
-        newObject.image = UIImagePNGRepresentation(_coverArt.image);
+        // quick fix for case of user favoriting before image load has
+        // a chance to conclude to ensure favorties always get an image
+        if (_coverArt.image)
+        {
+            newObject.image = UIImagePNGRepresentation(_coverArt.image);
+        }
+        else
+        {
+            newObject.image = UIImagePNGRepresentation([UIImage imageNamed:@"default_cover_art"]);
+        }
         
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
