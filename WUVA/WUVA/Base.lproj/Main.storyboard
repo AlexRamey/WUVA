@@ -11,7 +11,7 @@
         <scene sceneID="CPk-k7-3dr">
             <objects>
                 <navigationController id="jP4-ot-NGf" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Recents" id="Boo-MP-6th"/>
+                    <tabBarItem key="tabBarItem" title="Recents" image="recentsIcon" id="Boo-MP-6th"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="x0y-7G-5sU">
@@ -51,7 +51,7 @@
         <scene sceneID="v0Y-RP-eny">
             <objects>
                 <navigationController id="5yy-jf-8Kp" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="92.7" id="hUu-5w-h6K"/>
+                    <tabBarItem key="tabBarItem" title="92.7" image="radioIcon" id="hUu-5w-h6K"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="0Fy-ea-X1T">
@@ -292,7 +292,7 @@
         <scene sceneID="QFe-3H-ddZ">
             <objects>
                 <navigationController id="6OU-gE-LDU" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Favorites" id="J5T-kF-dDY"/>
+                    <tabBarItem key="tabBarItem" title="Favorites" image="favIcon" id="J5T-kF-dDY"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="gh9-Se-a6C">
@@ -462,4 +462,9 @@
             <point key="canvasLocation" x="676" y="849"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="favIcon" width="25" height="25"/>
+        <image name="radioIcon" width="25" height="25"/>
+        <image name="recentsIcon" width="25" height="25"/>
+    </resources>
 </document>

@@ -31,6 +31,7 @@
 		D07702581C3ED4EF00E339FD /* WUVRecentlyPlayedController.m in Sources */ = {isa = PBXBuildFile; fileRef = D07702571C3ED4EF00E339FD /* WUVRecentlyPlayedController.m */; };
 		D077025C1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D077025B1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m */; };
 		D077025F1C3F4D0300E339FD /* WUVRPTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D077025E1C3F4D0300E339FD /* WUVRPTableViewCell.m */; };
+		D07702611C40C88500E339FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D07702601C40C88500E339FD /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		D077025B1C3EDCCF00E339FD /* WUVRecentlyPlayedTrackInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUVRecentlyPlayedTrackInfo.m; sourceTree = "<group>"; };
 		D077025D1C3F4D0300E339FD /* WUVRPTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUVRPTableViewCell.h; sourceTree = "<group>"; };
 		D077025E1C3F4D0300E339FD /* WUVRPTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUVRPTableViewCell.m; sourceTree = "<group>"; };
+		D07702601C40C88500E339FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 		D0366D1E1BE0309400CEF5E5 = {
 			isa = PBXGroup;
 			children = (
+				D07702601C40C88500E339FD /* Settings.bundle */,
 				D04A248F1C2F026F003B4540 /* Frameworks */,
 				D0366D291BE0309400CEF5E5 /* WUVA */,
 				D0366D281BE0309400CEF5E5 /* Products */,
@@ -299,6 +302,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D07702611C40C88500E339FD /* Settings.bundle in Resources */,
 				D0366D3A1BE0309400CEF5E5 /* LaunchScreen.storyboard in Resources */,
 				D0366D371BE0309400CEF5E5 /* Assets.xcassets in Resources */,
 				D0366D351BE0309400CEF5E5 /* Main.storyboard in Resources */,
