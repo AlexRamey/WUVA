@@ -247,6 +247,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c1B-k9-8aQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="625" y="-433"/>
+        </scene>
         <!--Fav Collection View Controller-->
         <scene sceneID="d5k-4Y-Mfd">
             <objects>

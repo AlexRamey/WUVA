@@ -299,6 +299,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     
     _artist.text = @"92.7 Nash Icon";
     _songTitle.text = @" ";         // make invisible but don't let label collapse
+    [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
     [_favorite setEnabled:NO];
     
     [self configureNowPlayingInfo];
