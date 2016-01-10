@@ -511,7 +511,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
             // NSLog(@"State: Error");
             // quick fix for the "invisible play button" after player initially
             // fails to connect (like when user is in airplane mode when they launch
-            // the app
+            // the app)
             [_play setBackgroundImage:[UIImage imageNamed:@"PlayIcon"] forState:UIControlStateNormal];
             break;
         case kTDPlayerStatePaused:
