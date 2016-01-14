@@ -12,6 +12,6 @@
 /* The purpose of this class is to download album art for the currently playing track. */
 @interface WUVImageLoader : NSObject
 
--(void)loadImageForArtist:(NSString*)artist track:(NSString *)track completion:(void (^)(NSError*, WUVRelease*))completion;
+-(void)loadImageForArtist:(NSString*)artist track:(NSString *)track completion:(void (^)(NSError*, WUVRelease*, NSString*, NSString*))completion;
 
 @end

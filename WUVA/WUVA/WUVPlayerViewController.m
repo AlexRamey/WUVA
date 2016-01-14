@@ -14,7 +14,6 @@
 
 @interface WUVPlayerViewController () <TritonPlayerDelegate>
 @property (nonatomic, strong) TritonPlayer *tritonPlayer;
-@property (nonatomic, strong) WUVImageLoader *imageLoader;
 @property (nonatomic, weak) IBOutlet UIImageView *coverArt;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) NSNumber *interruptedOnPlayback;
@@ -174,7 +173,6 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     
     if (self)
     {
-        self.imageLoader = [WUVImageLoader new];
         self.interruptedOnPlayback = @NO;
         
         // initialize lock screen control and info parameters
@@ -462,10 +460,23 @@ const int WUV_STREAM_LAG_SECONDS = 0;
         
         if (!_coverArt.image)   //cache miss
         {
-            [self.imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release) {
+            WUVImageLoader *imageLoader = [WUVImageLoader new];
+            [imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    if (!release)
+                    if (!artist || !track)
+                    {
+                        // We passed a nil to the imageLoader for either artist or track.
+                        // In this case, imageLoader didn't do anything. This can happen
+                        // if a cuePoint comes in without track/artist info.
+                        return;
+                    }
+                    else if (([artist compare:_artist.text] != NSOrderedSame) ||
+                        ([track compare:_songTitle.text]) != NSOrderedSame)
+                    {
+                        // song has changed. These results are no longer relevant.
+                        return;
+                    }
+                    else if (!release)
                     {
                         // load default
                         self.coverArt.image = [UIImage imageNamed:@"default_cover_art"];

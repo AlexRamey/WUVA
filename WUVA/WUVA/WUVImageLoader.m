@@ -22,6 +22,12 @@
 
 @property (strong, nonatomic) NSString *release_id;
 @property (strong, nonatomic) NSMutableArray *releases;
+
+@property (nonatomic, copy) NSString *artist;
+@property (nonatomic, copy) NSString *track;
+
+// an imageLoader may only take on one task at a time.
+@property BOOL isBusy;
 @end
 
 @implementation WUVImageLoader
@@ -64,20 +70,34 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
         
         
         self.session = [NSURLSession sessionWithConfiguration:sessionConfig];
+        self.isBusy = NO;
     }
     
     return self;
 }
 
--(void)loadImageForArtist:(NSString*)artist track:(NSString *)track completion:(void (^)(NSError*, WUVRelease*))completion
+-(void)loadImageForArtist:(NSString*)artist track:(NSString *)track completion:(void (^)(NSError*, WUVRelease*, NSString*, NSString*))completion
 {
+    if (self.isBusy == YES)
+    {
+        return;
+    }
+    
+    self.isBusy = YES;
     self.releases = [NSMutableArray new];
     
     if (!artist || !track)
     {
-        completion(nil, nil);
+        completion(nil, nil, _artist, _track);
+        self.isBusy = NO;
+        return;
     }
     
+    // copy these original params to pass to the completion block later
+    self.artist = artist;
+    self.track = track;
+    
+    // now reformat them
     track = [self formatTrack:track];
     artist = [self formatArtist:artist];
     
@@ -99,18 +119,21 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
         else
         {
             // NSLog(@"No Data!");
-            completion(nil,nil);
+            completion(nil,nil, _artist, _track);
+            self.isBusy = NO;
         }
     }] resume];
 }
 
--(void)beginConcurrentDownloadAttemptsWithCompletion:(void (^)(NSError*, WUVRelease*))completion
+-(void)beginConcurrentDownloadAttemptsWithCompletion:(void (^)(NSError*, WUVRelease*, NSString*, NSString*))completion
 {
     __block int count = (int)([_releases count]);
     
     if (count == 0)
     {
-        completion(nil,nil);
+        completion(nil,nil, _artist, _track);
+        self.isBusy = NO;
+        return;
     }
     
     for (NSUInteger i = 0; i < [_releases count]; i++)
@@ -135,11 +158,13 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
                         NSData *artwork = [(WUVRelease *)_releases[j] artwork];
                         if (artwork != nil)
                         {
-                            completion(nil, _releases[j]);
+                            completion(nil, _releases[j], _artist, _track);
+                            self.isBusy = NO;
                             return;
                         }
                     }
-                    completion(nil,nil);
+                    completion(nil,nil, _artist, _track);
+                    self.isBusy = NO;
                 }
             });
             
