@@ -85,6 +85,8 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
     
     self.isBusy = YES;
     self.releases = [NSMutableArray new];
+    self.artist = artist;
+    self.track = track;
     
     if (!artist || !track)
     {
@@ -92,10 +94,6 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
         self.isBusy = NO;
         return;
     }
-    
-    // copy these original params to pass to the completion block later
-    self.artist = artist;
-    self.track = track;
     
     // now reformat them
     track = [self formatTrack:track];
