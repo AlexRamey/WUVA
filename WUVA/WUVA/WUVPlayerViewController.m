@@ -519,7 +519,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
             [self showDefaults];
             break;
         case kTDPlayerStateError:
-            // NSLog(@"State: Error");
+            NSLog(@"State: Error");
             // quick fix for the "invisible play button" after player initially
             // fails to connect (like when user is in airplane mode when they launch
             // the app)

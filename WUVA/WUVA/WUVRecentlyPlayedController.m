@@ -165,9 +165,9 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     for (WUVRecentlyPlayedTrackInfo *info in RPInfos)
     {
         WUVImageLoader *imageLoader = [WUVImageLoader new];
-        [imageLoader loadImageForArtist:info.artist track:info.songTitle completion:^(NSError *error, WUVRelease *release){
+        [imageLoader loadImageForArtist:info.artist track:info.songTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track){
             
-            if (error)
+            if (!release)
             {
                 // NSLog(@"error: %@", error);
                 info.artwork = nil;
