@@ -34,15 +34,16 @@
     return result;
 }
 
-/* do the conversion from NSData to UIImage */
-- (UIImage *)albumArt
+- (NSString *)imageKey
 {
-    if (self.artwork)
+    if (self.songTitle && self.artist)
     {
-        return [UIImage imageWithData:self.artwork];
+        return [self.songTitle stringByAppendingString:self.artist];
     }
-    
-    return nil;
+    else
+    {
+        return nil;
+    }
 }
 
 #pragma mark - NSCoding
@@ -54,7 +55,6 @@
     {
         self.songTitle = [decoder decodeObjectForKey:@"songTitle"];
         self.artist = [decoder decodeObjectForKey:@"artist"];
-        self.artwork = [decoder decodeObjectForKey:@"artwork"];
     }
     
     return self;
@@ -64,7 +64,6 @@
 {
     [encoder encodeObject:self.songTitle forKey:@"songTitle"];
     [encoder encodeObject:self.artist forKey:@"artist"];
-    [encoder encodeObject:self.artwork forKey:@"artwork"];
 }
 
 @end

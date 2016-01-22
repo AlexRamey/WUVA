@@ -14,8 +14,7 @@
 
 @property (nonatomic, strong) NSString *songTitle;
 @property (nonatomic, strong) NSString *artist;
-@property (nonatomic, strong) NSData *artwork;
 
--(UIImage *)albumArt;
+- (NSString *)imageKey;
 
 @end

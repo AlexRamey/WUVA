@@ -80,6 +80,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
 {
     if (self.isBusy == YES)
     {
+        NSLog(@"Busy!");
         return;
     }
     
@@ -101,7 +102,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
     
     NSString *brainz_url = [@"https://www.musicbrainz.org/ws/2/recording?query=" stringByAppendingString:[[NSString stringWithFormat:@"%@ AND %@", track, artist] urlencode]];
     
-    brainz_url = [brainz_url stringByAppendingString:@"&limit=10"];
+    brainz_url = [brainz_url stringByAppendingString:@"&limit=5"];
     
     // NSLog(@"Brainz-URL %@", brainz_url);
     
@@ -136,11 +137,11 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
     
     for (NSUInteger i = 0; i < [_releases count]; i++)
     {
-        NSString *cover_art_url = [NSString stringWithFormat:@"https://coverartarchive.org/release/%@/front-500.jpg", [_releases[i] release_id]];
+        NSString *cover_art_url = [NSString stringWithFormat:@"https://coverartarchive.org/release/%@/front-250.jpg", [_releases[i] release_id]];
         
         [[_session dataTaskWithURL:[NSURL URLWithString:cover_art_url] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error){
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{ //grand central dispatch
                 
                 NSHTTPURLResponse *http_response = (NSHTTPURLResponse*)response;
                 if ((data != nil) && ([http_response statusCode] != 404))

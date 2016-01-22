@@ -181,7 +181,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
         
         NSDictionary *settings = @{SettingsStationNameKey : @"MOBILEFM",
                                    SettingsBroadcasterKey : @"Triton Digital",
-                                   SettingsMountKey : @"WUVA"
+                                   SettingsMountKey : @"MOBILEFM"
                                    };
         self.tritonPlayer = [[TritonPlayer alloc] initWithDelegate:self andSettings: settings];
         
@@ -428,7 +428,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
 #pragma mark TritonPlayerDelegate methods
 
 - (void)player:(TritonPlayer *)player didReceiveCuePointEvent:(CuePointEvent *)cuePointEvent {
-    // NSLog(@"Received CuePoint: %@", cuePointEvent.data);
+    NSLog(@"Received CuePoint: %@", cuePointEvent.data);
     // Check if it's an ad or track cue point
     if ([cuePointEvent.type isEqualToString:EventTypeAd])
     {
@@ -471,7 +471,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
                         return;
                     }
                     else if (([artist compare:_artist.text] != NSOrderedSame) ||
-                        ([track compare:_songTitle.text]) != NSOrderedSame)
+                        ([track compare:_songTitle.text] != NSOrderedSame))
                     {
                         // song has changed. These results are no longer relevant.
                         return;

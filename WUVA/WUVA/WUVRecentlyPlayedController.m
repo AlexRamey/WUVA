@@ -15,6 +15,8 @@
 @interface WUVRecentlyPlayedController ()
 @property (nonatomic, strong) TDCuePointHistory *radioArchivist;
 @property (nonatomic, strong) NSMutableArray *recentlyPlayedItems;
+@property (nonatomic, strong) NSMutableDictionary *images;
+@property (nonatomic, strong) UIImage *defaultImage;
 @end
 
 @implementation WUVRecentlyPlayedController
@@ -37,6 +39,8 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
         {
             _recentlyPlayedItems = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
         }
+        _images = [NSMutableDictionary new];
+        _defaultImage = [UIImage imageNamed:@"default_cover_art"];
     }
     
     return self;
@@ -64,117 +68,97 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     [self.tableView setContentOffset:CGPointMake(0.0, -self.refreshControl.frame.size.height)];
     [self.refreshControl beginRefreshing];
     
-    [_radioArchivist requestHistoryForMount:@"WUVA" withMaximumItems:25 eventTypeFilter:@[EventTypeTrack] completionHandler:^(NSArray *historyItems, NSError *error) {
+    [_radioArchivist requestHistoryForMount:@"MOBILEFM" withMaximumItems:25 eventTypeFilter:@[EventTypeTrack] completionHandler:^(NSArray *historyItems, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error)
             {
-                // NSLog(@"ERROR: %@", error);
+                NSLog(@"ERROR: %@", error);
                 [self.refreshControl endRefreshing];
             }
             else
             {
-                NSMutableArray *results = [NSMutableArray new];
-                
+                _recentlyPlayedItems = [NSMutableArray new];
                 for (CuePointEvent *item in historyItems)
                 {
                     // NSLog(@"%@",item.data);
                     WUVRecentlyPlayedTrackInfo *info = [WUVRecentlyPlayedTrackInfo new];
                     info.songTitle = [item.data objectForKey:@"cue_title"];
                     info.artist = [item.data objectForKey:@"track_artist_name"];
-                    [results addObject:info];
+                    [_recentlyPlayedItems addObject:info];
                 }
                 
-                // Remove things in _recentlyPlayedItems that are no longer in
-                // the results
-                NSMutableArray *oldItems = [NSMutableArray new];
-                NSMutableArray *carryOverItemsWithoutImageData = [NSMutableArray new];
-                for (WUVRecentlyPlayedTrackInfo *info in _recentlyPlayedItems)
-                {
-                    if (![results containsObject:info])
-                    {
-                        [oldItems addObject:info];
-                    }
-                    else if (info.artwork == nil)
-                    {
-                        [carryOverItemsWithoutImageData addObject:info];
-                    }
-                }
-                
-                for (WUVRecentlyPlayedTrackInfo *info in oldItems)
-                {
-                    [_recentlyPlayedItems removeObject:info];
-                }
-                
-                // The front of the results has the newest stuff. Thus, work backwards
-                // from the end of results and start inserting new stuff at the beginning
-                // of _recentlyPlayedItems as it's encountered to maintain ordering
-                NSMutableArray *newItems = [NSMutableArray new];
-                int size = (int)[results count];
-                for (int i = size - 1; i >= 0; i--)
-                {
-                    if (![_recentlyPlayedItems containsObject:results[i]])
-                    {
-                        [_recentlyPlayedItems insertObject:results[i] atIndex:0];
-                        // track the new items
-                        [newItems addObject:results[i]];
-                    }
-                }
-                
-                // If it's been a while, some items in results that were also initially in
-                // _recentlyPlayedItems may have played again on the radio. This means that
-                // they may wrongly be at the end of the list of _recentlyPlayedItems. To
-                // compensate for this, we will sort _recentlyPlayedItems again according to
-                // the ordering of results to guarantee correct ordering
-                [_recentlyPlayedItems sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-                    WUVRecentlyPlayedTrackInfo *info_one = (WUVRecentlyPlayedTrackInfo *)obj1;
-                    WUVRecentlyPlayedTrackInfo *info_two = (WUVRecentlyPlayedTrackInfo *)obj2;
-                    int results_size = (int)[results count];
-                    for (int i = 0; i < results_size; i++)
-                    {
-                        if ([info_one isEqual:results[i]])
-                        {
-                            return NSOrderedAscending;
-                        }
-                        else if ([info_two isEqual:results[i]])
-                        {
-                            return NSOrderedDescending;
-                        }
-                    }
-                    return NSOrderedSame;
-                }];
-                
-                // Furthermore, we wish to attempt to loadImages for all newItems and all
-                // items that don't have image data.
-                [self loadImages:[newItems arrayByAddingObjectsFromArray:carryOverItemsWithoutImageData]];
+                // Furthermore, we wish to remove old images from memory
+                [self deleteImages];
+                // . . .and load new ones
+                //[self loadImages];
+                [self.refreshControl endRefreshing];
+                [self.tableView reloadData];
+                [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:_recentlyPlayedItems] forKey:WUV_CACHED_RPINFOS_KEY];
+                [[NSUserDefaults standardUserDefaults] synchronize];
             }
         });
     }];
 }
 
-- (void)loadImages:(NSArray *)RPInfos
+- (void)deleteImages
 {
-    __block int load_counter = (int)[RPInfos count];
+    NSMutableArray *keysToDelete = [NSMutableArray arrayWithArray:[_images allKeys]];
+    
+    for (WUVRecentlyPlayedTrackInfo *info in _recentlyPlayedItems)
+    {
+        NSString *key = [info imageKey];
+        if (key != nil)
+        {
+            [keysToDelete removeObject:key];
+        }
+    }
+    
+    for (NSString *key in keysToDelete)
+    {
+        NSLog(@"deleted 1 image");
+        [_images removeObjectForKey:key];
+    }
+}
+/*
+- (void)loadImages
+{
+    NSMutableArray *itemsToLoad = [NSMutableArray new];
+    
+    for (WUVRecentlyPlayedTrackInfo *info in _recentlyPlayedItems)
+    {
+        NSString *key = [info imageKey];
+        if ((key != nil) && ([_images objectForKey:key] == nil))
+        {
+            [itemsToLoad addObject:info];
+        }
+    }
+    
+    __block int load_counter = (int)[itemsToLoad count];
+    NSLog(@"Load Count: %d", load_counter);
     // NSLog(@"Load Counter: %d", load_counter);
     if (load_counter == 0)
     {
         [self.refreshControl endRefreshing];
         [self.tableView reloadData];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:_recentlyPlayedItems] forKey:WUV_CACHED_RPINFOS_KEY];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         return;
     }
     
-    for (WUVRecentlyPlayedTrackInfo *info in RPInfos)
+    for (WUVRecentlyPlayedTrackInfo *info in itemsToLoad)
     {
         WUVImageLoader *imageLoader = [WUVImageLoader new];
+        NSLog(@"artist: %@ songTitle: %@", info.artist, info.songTitle);
         [imageLoader loadImageForArtist:info.artist track:info.songTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track){
             
-            if (!release)
+            if (release != nil)
             {
-                // NSLog(@"error: %@", error);
-                info.artwork = nil;
+                NSLog(@"info: %@", info.songTitle);
+                [_images setObject:release.artwork forKey:[info imageKey]];
             }
             else
             {
-                info.artwork = release.artwork;
+                NSLog(@"nil result");
             }
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -191,7 +175,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
         }];
     }
 }
-
+*/
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -217,14 +201,36 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     WUVRecentlyPlayedTrackInfo *info = _recentlyPlayedItems[indexPath.row];
     cell.artist.text = info.artist;
     cell.songTitle.text = info.songTitle;
-    if (info.artwork)
+    
+    if (_defaultImage == nil)
     {
-        cell.coverArt.image = info.albumArt;
+        _defaultImage = [UIImage imageNamed:@"default_cover_art"];
+    }
+    
+    cell.coverArt.image = _defaultImage;
+    NSString *key = [info imageKey];
+    
+    if ((key != nil) && ([_images objectForKey:key] != nil))
+    {
+        NSLog(@"uncached 1 image");
+        cell.coverArt.image = [_images objectForKey:key];
+    }
+    else if ([info imageKey] != nil)
+    {
+        [cell loadImageWithCompletion:^(NSData *data)
+        {
+            if (data)
+            {
+                NSLog(@"cached 1 image");
+                [_images setObject:[UIImage imageWithData:data] forKey:key];
+            }
+        }];
     }
     else
     {
-        cell.coverArt.image = [UIImage imageNamed:@"default_cover_art"];
+        cell.coverArt.image = _defaultImage;
     }
+    
     return cell;
 }
 
