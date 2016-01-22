@@ -24,7 +24,7 @@
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     WUVFavorite *deleteObject = [WUVFavorite new];
     deleteObject.artist = self.artist;
-    deleteObject.title = self.songTitle;
+    deleteObject.songTitle = self.songTitle;
     
     NSMutableArray *objectArray;
     NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];

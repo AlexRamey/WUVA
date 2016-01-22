@@ -45,7 +45,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     {
         WUVFavorite *comparedObject = [[WUVFavorite alloc] init];
         comparedObject.artist = _artist.text;
-        comparedObject.title = _songTitle.text;
+        comparedObject.songTitle = _songTitle.text;
         NSMutableArray *objectArray = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
         if([objectArray containsObject:comparedObject])
         {
@@ -68,18 +68,8 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     {
         WUVFavorite *newObject = [WUVFavorite new];
         newObject.artist = _artist.text;
-        newObject.title = _songTitle.text;
-        newObject.date_favorited = [NSDate date];
-        // quick fix for case of user favoriting before image load has
-        // a chance to conclude to ensure favorties always get an image
-        if (_coverArt.image)
-        {
-            newObject.image = UIImagePNGRepresentation(_coverArt.image);
-        }
-        else
-        {
-            newObject.image = UIImagePNGRepresentation([UIImage imageNamed:@"default_cover_art"]);
-        }
+        newObject.songTitle = _songTitle.text;
+        newObject.dateFavorited = [NSDate date];
         
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];
@@ -102,7 +92,7 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     {
         WUVFavorite *deleteObject = [WUVFavorite new];
         deleteObject.artist = _artist.text;
-        deleteObject.title = _songTitle.text;
+        deleteObject.songTitle = _songTitle.text;
         
         NSMutableArray *objectArray;
         NSData *data = [userDefaults objectForKey:@"WUV_FAVORITES_KEY"];

@@ -13,11 +13,26 @@
 
 @interface FavCollectionViewController () <UICollectionViewDelegateFlowLayout>
 @property NSMutableArray *objectArray;
+@property (nonatomic, strong) NSMutableDictionary *images;
+@property (nonatomic, strong) UIImage *defaultImage;
 @end
 
 @implementation FavCollectionViewController
 
 static NSString * const reuseIdentifier = @"CCell";
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    
+    if (self)
+    {
+        _defaultImage = [UIImage imageNamed:@"default_cover_art"];
+        _images = [NSMutableDictionary new];
+    }
+    
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -69,11 +84,38 @@ static NSString * const reuseIdentifier = @"CCell";
     FavCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
     WUVFavorite *current = [_objectArray objectAtIndex:[indexPath row]];
-    NSData *imageData = current.image;
-    UIImage *image = [UIImage imageWithData:imageData];
-    cell.imageView.image = image;
+    
+    if (!_defaultImage)
+    {
+        _defaultImage = [UIImage imageNamed:@"default_cover_art"];
+    }
+    
+    cell.coverArt.image = _defaultImage;
     cell.artist.text = current.artist;
-    cell.songTitle.text = current.title;
+    cell.songTitle.text = current.songTitle;
+    
+    NSString *key = [current imageKey];
+    
+    if ((key != nil) && ([_images objectForKey:key] != nil))
+    {
+        NSLog(@"uncached 1 image");
+        cell.coverArt.image = [_images objectForKey:key];
+    }
+    else if (key != nil)
+    {
+        [cell loadImageWithCompletion:^(NSData *data)
+         {
+             if (data)
+             {
+                 NSLog(@"cached 1 image");
+                 [_images setObject:[UIImage imageWithData:data] forKey:key];
+             }
+         }];
+    }
+    else
+    {
+        cell.coverArt.image = _defaultImage;
+    }
     
     return cell;
 }
@@ -96,15 +138,25 @@ static NSString * const reuseIdentifier = @"CCell";
         NSIndexPath *selectedIndexPath = [self.collectionView indexPathsForSelectedItems][0];
       
         WUVFavorite *current = [_objectArray objectAtIndex:[selectedIndexPath row]];
-        NSData *imageData = current.image;
-        UIImage *image =[UIImage imageWithData:imageData];
         
         FavDetailViewController *detail = segue.destinationViewController;
-        
-        detail.image = image;
+        NSString *key = [current imageKey];
+        if ((key != nil) && ([_images objectForKey:key] != nil))
+        {
+            detail.image = [_images objectForKey:key];
+        }
+        else
+        {
+            if (!_defaultImage)
+            {
+                _defaultImage = [UIImage imageNamed:@"default_cover_art"];
+            }
+            
+            detail.image = _defaultImage;
+        }
         detail.artist = current.artist;
-        detail.songTitle = current.title;
-        detail.date = current.date_favorited;
+        detail.songTitle = current.songTitle;
+        detail.date = current.dateFavorited;
     }
 }
 

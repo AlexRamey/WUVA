@@ -373,7 +373,7 @@
                                 </variation>
                                 <connections>
                                     <outlet property="artist" destination="aa0-eo-iaO" id="47V-em-Ue7"/>
-                                    <outlet property="imageView" destination="hgl-fk-X08" id="nsf-CK-v6L"/>
+                                    <outlet property="coverArt" destination="hgl-fk-X08" id="70t-en-Tsc"/>
                                     <outlet property="songTitle" destination="S2R-Lj-Tat" id="I9l-hp-Jd1"/>
                                     <segue destination="fSW-rg-aJi" kind="show" identifier="showDetail" id="va2-tG-mWw"/>
                                 </connections>

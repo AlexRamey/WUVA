@@ -9,7 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface FavCollectionViewCell : UICollectionViewCell
-@property IBOutlet UIImageView *imageView;
+@property IBOutlet UIImageView *coverArt;
 @property IBOutlet UILabel *artist;
 @property IBOutlet UILabel *songTitle;
+
+- (void)loadImageWithCompletion:(void (^)(NSData*))completion;
+
 @end

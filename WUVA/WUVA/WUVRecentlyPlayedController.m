@@ -30,15 +30,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     if (self)
     {
         _radioArchivist = [TDCuePointHistory new];
-        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:WUV_CACHED_RPINFOS_KEY];
-        if (!data)
-        {
-            _recentlyPlayedItems = [NSMutableArray new];
-        }
-        else
-        {
-            _recentlyPlayedItems = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
-        }
+        _recentlyPlayedItems = [NSMutableArray new];
         _images = [NSMutableDictionary new];
         _defaultImage = [UIImage imageNamed:@"default_cover_art"];
     }
@@ -93,8 +85,6 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
                 //[self loadImages];
                 [self.refreshControl endRefreshing];
                 [self.tableView reloadData];
-                [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:_recentlyPlayedItems] forKey:WUV_CACHED_RPINFOS_KEY];
-                [[NSUserDefaults standardUserDefaults] synchronize];
             }
         });
     }];

@@ -15,9 +15,8 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:self.artist forKey:@"artist"];
-    [aCoder encodeObject:self.title forKey:@"title"];
-    [aCoder encodeObject:self.image forKey:@"image"];
-    [aCoder encodeObject:self.date_favorited forKey:@"date"];
+    [aCoder encodeObject:self.songTitle forKey:@"title"];
+    [aCoder encodeObject:self.dateFavorited forKey:@"date"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
@@ -26,9 +25,8 @@
     if (self != nil)
     {
         self.artist  = [aDecoder decodeObjectForKey:@"artist"];
-        self.title = [aDecoder decodeObjectForKey:@"title"];
-        self.image = [aDecoder decodeObjectForKey:@"image"];
-        self.date_favorited = [aDecoder decodeObjectForKey:@"date"];
+        self.songTitle = [aDecoder decodeObjectForKey:@"title"];
+        self.dateFavorited = [aDecoder decodeObjectForKey:@"date"];
     }
     
     return self;
@@ -43,7 +41,7 @@
         return NO;
     }
 
-    return [[self artist] isEqualToString:[other artist]] && [[self title] isEqualToString:[other title]];
+    return [[self artist] isEqualToString:[other artist]] && [[self songTitle] isEqualToString:[other songTitle]];
     
 }
 
@@ -51,9 +49,21 @@
 {
     NSUInteger prime = 31;
     NSUInteger result = 1;
-    result = prime * result + [self.title hash];
+    result = prime * result + [self.songTitle hash];
     result = prime * result + [self.artist hash];
     return result;
+}
+
+- (NSString *)imageKey
+{
+    if (self.songTitle && self.artist)
+    {
+        return [self.songTitle stringByAppendingString:self.artist];
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 @end

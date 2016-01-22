@@ -10,8 +10,9 @@
 
 @interface WUVFavorite : NSObject <NSCoding>
 @property (nonatomic, strong) NSString *artist;
-@property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSData *image;
-@property (nonatomic, strong) NSDate *date_favorited;
+@property (nonatomic, strong) NSString *songTitle;
+@property (nonatomic, strong) NSDate *dateFavorited;
+
+- (NSString *)imageKey;
 
 @end
