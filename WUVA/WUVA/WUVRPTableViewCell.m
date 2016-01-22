@@ -38,7 +38,9 @@
             if ((self.artist.text != nil) && ([artist compare:self.artist.text] == NSOrderedSame) && (self.songTitle.text != nil) && ([track compare:self.songTitle.text] == NSOrderedSame))
             {
                 // results are still relevant
-                self.coverArt.image = [UIImage imageWithData:release.artwork];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.coverArt.image = [UIImage imageWithData:release.artwork];
+                });
             }
             completion(release.artwork);
         }
