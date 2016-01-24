@@ -11,16 +11,12 @@
 
 @interface WUVRPTableViewCell()
 
-@property (nonatomic, strong) WUVImageLoader *imageLoader;
-
 @end
 
 @implementation WUVRPTableViewCell
 
 - (void)awakeFromNib {
     // Initialization code
-    NSLog(@"initialization");
-    _imageLoader = [WUVImageLoader new];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -31,7 +27,8 @@
 
 - (void)loadImageWithCompletion:(void (^)(NSData *imageData))completion
 {
-    [_imageLoader loadImageForArtist:self.artist.text track:self.songTitle.text completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track)
+    WUVImageLoader *imageLoader = [WUVImageLoader new];
+    [imageLoader loadImageForArtist:self.artist.text track:self.songTitle.text completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track)
     {
         if (release)
         {

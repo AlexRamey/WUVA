@@ -144,6 +144,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
             dispatch_async(dispatch_get_main_queue(), ^{ //grand central dispatch
                 
                 NSHTTPURLResponse *http_response = (NSHTTPURLResponse*)response;
+                //todo look at this
                 if ((data != nil) && ([http_response statusCode] != 404))
                 {
                     [((WUVRelease*)([_releases objectAtIndex:i])) setArtwork:data];

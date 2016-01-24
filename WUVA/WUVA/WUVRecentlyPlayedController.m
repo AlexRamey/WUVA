@@ -211,8 +211,10 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
         {
             if (data)
             {
-                NSLog(@"cached 1 image");
-                [_images setObject:[UIImage imageWithData:data] forKey:key];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSLog(@"cached 1 image");
+                    [_images setObject:[UIImage imageWithData:data] forKey:key];
+                });
             }
         }];
     }
