@@ -60,11 +60,11 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     [self.tableView setContentOffset:CGPointMake(0.0, -self.refreshControl.frame.size.height)];
     [self.refreshControl beginRefreshing];
     
-    [_radioArchivist requestHistoryForMount:@"MOBILEFM" withMaximumItems:25 eventTypeFilter:@[EventTypeTrack] completionHandler:^(NSArray *historyItems, NSError *error) {
+    [_radioArchivist requestHistoryForMount:@"WUVA" withMaximumItems:25 eventTypeFilter:@[EventTypeTrack] completionHandler:^(NSArray *historyItems, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error)
             {
-                NSLog(@"ERROR: %@", error);
+                // NSLog(@"ERROR: %@", error);
                 [self.refreshControl endRefreshing];
             }
             else
@@ -105,67 +105,11 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     
     for (NSString *key in keysToDelete)
     {
-        NSLog(@"deleted 1 image");
+        // NSLog(@"deleted 1 image");
         [_images removeObjectForKey:key];
     }
 }
-/*
-- (void)loadImages
-{
-    NSMutableArray *itemsToLoad = [NSMutableArray new];
-    
-    for (WUVRecentlyPlayedTrackInfo *info in _recentlyPlayedItems)
-    {
-        NSString *key = [info imageKey];
-        if ((key != nil) && ([_images objectForKey:key] == nil))
-        {
-            [itemsToLoad addObject:info];
-        }
-    }
-    
-    __block int load_counter = (int)[itemsToLoad count];
-    NSLog(@"Load Count: %d", load_counter);
-    // NSLog(@"Load Counter: %d", load_counter);
-    if (load_counter == 0)
-    {
-        [self.refreshControl endRefreshing];
-        [self.tableView reloadData];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:_recentlyPlayedItems] forKey:WUV_CACHED_RPINFOS_KEY];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        return;
-    }
-    
-    for (WUVRecentlyPlayedTrackInfo *info in itemsToLoad)
-    {
-        WUVImageLoader *imageLoader = [WUVImageLoader new];
-        NSLog(@"artist: %@ songTitle: %@", info.artist, info.songTitle);
-        [imageLoader loadImageForArtist:info.artist track:info.songTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track){
-            
-            if (release != nil)
-            {
-                NSLog(@"info: %@", info.songTitle);
-                [_images setObject:release.artwork forKey:[info imageKey]];
-            }
-            else
-            {
-                NSLog(@"nil result");
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                load_counter -= 1;
-                
-                if (load_counter == 0)
-                {
-                    [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:_recentlyPlayedItems] forKey:WUV_CACHED_RPINFOS_KEY];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    [self.refreshControl endRefreshing];
-                    [self.tableView reloadData];
-                }
-            });
-        }];
-    }
-}
-*/
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -202,7 +146,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
     
     if ((key != nil) && ([_images objectForKey:key] != nil))
     {
-        NSLog(@"uncached 1 image");
+        // NSLog(@"uncached 1 image");
         cell.coverArt.image = [_images objectForKey:key];
     }
     else if ([info imageKey] != nil)
@@ -212,7 +156,7 @@ NSString * const WUV_CACHED_RPINFOS_KEY = @"WUV_CACHED_RPINFOS_KEY";
             if (data)
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@"cached 1 image");
+                    // NSLog(@"cached 1 image");
                     [_images setObject:[UIImage imageWithData:data] forKey:key];
                 });
             }

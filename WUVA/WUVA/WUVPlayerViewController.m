@@ -22,6 +22,7 @@
 @property (nonatomic, weak) IBOutlet UILabel *songTitle;
 @property (nonatomic, weak) IBOutlet UIButton *favorite;
 @property BOOL isCurrentlyPlayingSongFavorited;
+@property BOOL isAlertUp;
 @end
 
 
@@ -29,14 +30,12 @@
 
 NSString * const WUV_CACHED_IMAGE_KEY = @"WUV_CACHED_IMAGE_KEY";
 NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
-const int WUV_STREAM_LAG_SECONDS = 0;
-
 
 // called when a new song is played, updates the favorite icon
 - (void) updateFavoritesPlayerStateInformationForCurrentSong
 {
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"WUV_FAVORITES_KEY"];
-    if(data == nil)
+    if (data == nil)
     {
         _isCurrentlyPlayingSongFavorited = NO;
         [_favorite setBackgroundImage:[UIImage imageNamed:@"Unfavorite"] forState:UIControlStateNormal];
@@ -164,14 +163,14 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     if (self)
     {
         self.interruptedOnPlayback = @NO;
-        
+        self.isAlertUp = NO;
         // initialize lock screen control and info parameters
         [self configureRemoteCommandHandling];
         [self configureNowPlayingInfo];
         
         NSDictionary *settings = @{SettingsStationNameKey : @"MOBILEFM",
                                    SettingsBroadcasterKey : @"Triton Digital",
-                                   SettingsMountKey : @"MOBILEFM"
+                                   SettingsMountKey : @"WUVA"
                                    };
         self.tritonPlayer = [[TritonPlayer alloc] initWithDelegate:self andSettings: settings];
         
@@ -396,18 +395,16 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     // determine UNIX start time in seconds
     long long start_time = [(trackEventData[@"cue_time_start"]) longLongValue];
     start_time /= 1000;
-    start_time += WUV_STREAM_LAG_SECONDS;
     
     // determine duration in seconds
     NSString *duration = trackEventData[@"cue_time_duration"];
     NSInteger colon_location = [duration rangeOfString:@":" ].location;
-    NSInteger dot_location = [duration rangeOfString:@"."].location;
     NSInteger minutes = [[duration substringWithRange:NSMakeRange(0, colon_location)] intValue];
-    NSInteger seconds = [[duration substringWithRange:NSMakeRange(colon_location + 1, dot_location - colon_location - 1)] intValue];
-    NSInteger total_duration = (60 * minutes) + seconds;
+    NSInteger seconds = [[duration substringWithRange:NSMakeRange(colon_location + 1, 2)] intValue];
+    NSInteger total_duration = (60 * minutes) + seconds + 1; // round up by 1 sec.
     
     // determine UNIX current time in seconds
-    NSInteger current_time = (long)([[NSDate date] timeIntervalSince1970] + .5);
+    NSInteger current_time = (long)([[NSDate date] timeIntervalSince1970]);
     
     NSLog(@"Start Time: %lld", start_time);
     NSLog(@"Current Time: %ld", (long)current_time);
@@ -415,10 +412,35 @@ const int WUV_STREAM_LAG_SECONDS = 0;
     return (long)(start_time + total_duration - current_time);
 }
 */
+
+- (void)displayAlertWithTitle:(NSString *)title message:(NSString*)message
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.isAlertUp == NO)
+        {
+            self.isAlertUp = YES;
+            UIAlertController *alertController = [UIAlertController
+                                                  alertControllerWithTitle:title
+                                                  message:message
+                                                  preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *okAction = [UIAlertAction
+                                       actionWithTitle:@"OK"
+                                       style:UIAlertActionStyleDefault
+                                       handler:nil];
+            [alertController addAction:okAction];
+            [self presentViewController:alertController animated:YES completion:^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.isAlertUp = NO;
+                });
+            }];
+        }
+    });
+}
+
 #pragma mark TritonPlayerDelegate methods
 
 - (void)player:(TritonPlayer *)player didReceiveCuePointEvent:(CuePointEvent *)cuePointEvent {
-    NSLog(@"Received CuePoint: %@", cuePointEvent.data);
+    // NSLog(@"Received CuePoint: %@", cuePointEvent.data);
     // Check if it's an ad or track cue point
     if ([cuePointEvent.type isEqualToString:EventTypeAd])
     {
@@ -509,7 +531,8 @@ const int WUV_STREAM_LAG_SECONDS = 0;
             [self showDefaults];
             break;
         case kTDPlayerStateError:
-            NSLog(@"State: Error");
+            // NSLog(@"State: Error");
+            [self displayAlertWithTitle:@"Player Error" message:@"Unable to connect at this time. Please try again later."];
             // quick fix for the "invisible play button" after player initially
             // fails to connect (like when user is in airplane mode when they launch
             // the app)

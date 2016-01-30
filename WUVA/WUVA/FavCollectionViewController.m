@@ -98,7 +98,7 @@ static NSString * const reuseIdentifier = @"CCell";
     
     if ((key != nil) && ([_images objectForKey:key] != nil))
     {
-        NSLog(@"uncached 1 image");
+        // NSLog(@"uncached 1 image");
         cell.coverArt.image = [_images objectForKey:key];
     }
     else if (key != nil)
@@ -108,7 +108,7 @@ static NSString * const reuseIdentifier = @"CCell";
              if (data)
              {
                  dispatch_async(dispatch_get_main_queue(), ^{
-                     NSLog(@"cached 1 image");
+                     // NSLog(@"cached 1 image");
                      [_images setObject:[UIImage imageWithData:data] forKey:key];
                  });
              }

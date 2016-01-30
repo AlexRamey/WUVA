@@ -80,7 +80,7 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
 {
     if (self.isBusy == YES)
     {
-        NSLog(@"Busy!");
+        // NSLog(@"Busy!");
         return;
     }
     
@@ -144,8 +144,8 @@ Fire off all (up to 10) cover art requests at once, and have them write their re
             dispatch_async(dispatch_get_main_queue(), ^{ //grand central dispatch
                 
                 NSHTTPURLResponse *http_response = (NSHTTPURLResponse*)response;
-                //todo look at this
-                if ((data != nil) && ([http_response statusCode] != 404))
+                
+                if ((data != nil) && ([http_response statusCode] == 200))
                 {
                     [((WUVRelease*)([_releases objectAtIndex:i])) setArtwork:data];
                 }
