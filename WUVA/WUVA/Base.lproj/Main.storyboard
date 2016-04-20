@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="QDe-Zc-15k">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="QDe-Zc-15k">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
@@ -125,6 +125,9 @@
                                     <action selector="favoriteButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MDo-Gz-mqd"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="tUc-m8-5o3">
+                                <rect key="frame" x="141" y="177" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -135,12 +138,14 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ZfC-Kv-rMX" secondAttribute="bottom" priority="250" constant="30" id="5hy-yP-etp"/>
                             <constraint firstItem="ZfC-Kv-rMX" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Tob-az-UY7" secondAttribute="bottom" constant="4" id="6EL-y9-ihm"/>
                             <constraint firstItem="Tob-az-UY7" firstAttribute="top" secondItem="SdR-yd-Cla" secondAttribute="bottom" constant="4" id="BkT-sh-hNs"/>
+                            <constraint firstItem="tUc-m8-5o3" firstAttribute="centerY" secondItem="84Z-yX-xn3" secondAttribute="centerY" id="DKC-wB-g5r"/>
                             <constraint firstItem="OuV-BO-RAn" firstAttribute="leading" secondItem="ZfC-Kv-rMX" secondAttribute="trailing" constant="40" id="InI-tW-A5g"/>
                             <constraint firstItem="OuV-BO-RAn" firstAttribute="top" secondItem="84Z-yX-xn3" secondAttribute="bottom" constant="130" id="NDl-gf-3e3"/>
                             <constraint firstItem="Tob-az-UY7" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Pxb-N0-Phk"/>
                             <constraint firstItem="ZfC-Kv-rMX" firstAttribute="top" secondItem="Tob-az-UY7" secondAttribute="bottom" constant="50" id="dcQ-XX-zxm"/>
                             <constraint firstItem="OuV-BO-RAn" firstAttribute="centerY" secondItem="ZfC-Kv-rMX" secondAttribute="centerY" id="gWk-Gg-jZe"/>
                             <constraint firstAttribute="trailingMargin" secondItem="84Z-yX-xn3" secondAttribute="trailing" constant="20" id="ii9-XD-gfQ"/>
+                            <constraint firstItem="tUc-m8-5o3" firstAttribute="centerX" secondItem="84Z-yX-xn3" secondAttribute="centerX" id="j3U-jc-LPf"/>
                             <constraint firstItem="84Z-yX-xn3" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" multiplier="0.7" id="j9X-Ea-8GJ"/>
                             <constraint firstItem="SdR-yd-Cla" firstAttribute="top" relation="greaterThanOrEqual" secondItem="84Z-yX-xn3" secondAttribute="bottom" constant="4" id="jR9-R0-TNc"/>
                             <constraint firstItem="84Z-yX-xn3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="m97-d6-dec"/>
@@ -167,6 +172,7 @@
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="tUc-m8-5o3" id="N6f-Ac-rbI"/>
                         <outlet property="artist" destination="SdR-yd-Cla" id="Idg-Ch-9EA"/>
                         <outlet property="coverArt" destination="84Z-yX-xn3" id="FZA-J0-2Dm"/>
                         <outlet property="favorite" destination="OuV-BO-RAn" id="YUZ-rT-5vV"/>
@@ -237,6 +243,9 @@
                                                 </mask>
                                             </variation>
                                         </label>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="y46-JL-rCy">
+                                            <rect key="frame" x="32" y="32" width="20" height="20"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailingMargin" secondItem="pcl-Rq-AMm" secondAttribute="trailing" constant="10" id="3dU-0l-BfZ"/>
@@ -245,10 +254,12 @@
                                         <constraint firstItem="SMM-pI-MuC" firstAttribute="top" secondItem="uQa-tw-MFV" secondAttribute="topMargin" id="Ifp-bW-0wt"/>
                                         <constraint firstItem="ID7-uy-a64" firstAttribute="leading" secondItem="SMM-pI-MuC" secondAttribute="trailing" constant="10" id="PBb-vN-rdJ"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="ID7-uy-a64" secondAttribute="bottom" constant="7.5" id="VWk-gi-99F"/>
+                                        <constraint firstItem="y46-JL-rCy" firstAttribute="centerY" secondItem="SMM-pI-MuC" secondAttribute="centerY" id="VrG-VC-Iwu"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="ID7-uy-a64" secondAttribute="trailing" constant="10" id="ad4-aO-bf0"/>
                                         <constraint firstItem="SMM-pI-MuC" firstAttribute="bottom" secondItem="uQa-tw-MFV" secondAttribute="bottomMargin" id="d47-Wo-cWO"/>
                                         <constraint firstItem="ID7-uy-a64" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" constant="27" id="fVv-zx-Hhf"/>
                                         <constraint firstItem="pcl-Rq-AMm" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" constant="27" id="mJ1-VW-SNd"/>
+                                        <constraint firstItem="y46-JL-rCy" firstAttribute="centerX" secondItem="SMM-pI-MuC" secondAttribute="centerX" id="q1K-Uo-kb2"/>
                                         <constraint firstItem="SMM-pI-MuC" firstAttribute="leading" secondItem="uQa-tw-MFV" secondAttribute="leadingMargin" id="vXe-ty-wf7"/>
                                         <constraint firstItem="pcl-Rq-AMm" firstAttribute="leading" secondItem="SMM-pI-MuC" secondAttribute="trailing" constant="10" id="yHG-7Z-4GW"/>
                                     </constraints>
@@ -270,6 +281,7 @@
                                     </mask>
                                 </variation>
                                 <connections>
+                                    <outlet property="activityIndicator" destination="y46-JL-rCy" id="fCi-EN-kF4"/>
                                     <outlet property="artist" destination="pcl-Rq-AMm" id="tZ5-Kp-gZx"/>
                                     <outlet property="coverArt" destination="SMM-pI-MuC" id="p9S-y3-XOv"/>
                                     <outlet property="songTitle" destination="ID7-uy-a64" id="ys6-41-qwp"/>
@@ -346,14 +358,19 @@
                                             <color key="textColor" red="0.9938849803664922" green="0.9938849803664922" blue="0.9938849803664922" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="lHs-2P-5Kd">
+                                            <rect key="frame" x="57" y="56" width="37" height="37"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
                                     <constraint firstItem="hgl-fk-X08" firstAttribute="top" secondItem="bDA-Ts-vIc" secondAttribute="topMargin" constant="-8" id="0x5-8h-aYy"/>
                                     <constraint firstAttribute="trailingMargin" secondItem="S2R-Lj-Tat" secondAttribute="trailing" constant="-8" id="1Cs-Hs-nWO"/>
+                                    <constraint firstItem="lHs-2P-5Kd" firstAttribute="centerX" secondItem="hgl-fk-X08" secondAttribute="centerX" id="9u5-Pe-Ph8"/>
                                     <constraint firstItem="S2R-Lj-Tat" firstAttribute="top" secondItem="aa0-eo-iaO" secondAttribute="bottom" id="DIx-WA-5tg"/>
                                     <constraint firstAttribute="bottomMargin" secondItem="aa0-eo-iaO" secondAttribute="bottom" constant="2" id="HUa-F8-K8l"/>
+                                    <constraint firstItem="lHs-2P-5Kd" firstAttribute="centerY" secondItem="hgl-fk-X08" secondAttribute="centerY" id="KDP-8t-Ugz"/>
                                     <constraint firstAttribute="trailingMargin" secondItem="aa0-eo-iaO" secondAttribute="trailing" constant="-8" id="OsJ-Vw-8MS"/>
                                     <constraint firstItem="S2R-Lj-Tat" firstAttribute="leading" secondItem="bDA-Ts-vIc" secondAttribute="leadingMargin" constant="-8" id="R6p-Pp-TfD"/>
                                     <constraint firstItem="S2R-Lj-Tat" firstAttribute="top" secondItem="aa0-eo-iaO" secondAttribute="bottom" constant="1" id="RKK-Kv-fMk"/>
@@ -372,6 +389,7 @@
                                     </mask>
                                 </variation>
                                 <connections>
+                                    <outlet property="activityIndicator" destination="lHs-2P-5Kd" id="A2r-nd-7NK"/>
                                     <outlet property="artist" destination="aa0-eo-iaO" id="47V-em-Ue7"/>
                                     <outlet property="coverArt" destination="hgl-fk-X08" id="70t-en-Tsc"/>
                                     <outlet property="songTitle" destination="S2R-Lj-Tat" id="I9l-hp-Jd1"/>

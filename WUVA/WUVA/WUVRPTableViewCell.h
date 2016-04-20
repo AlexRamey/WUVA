@@ -12,6 +12,7 @@
 @property IBOutlet UIImageView *coverArt;
 @property IBOutlet UILabel *artist;
 @property IBOutlet UILabel *songTitle;
+@property IBOutlet UIActivityIndicatorView *activityIndicator;
 
 - (void)loadImageWithCompletion:(void (^)(NSData*))completion;
 

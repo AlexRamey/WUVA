@@ -37,6 +37,23 @@ static NSString * const reuseIdentifier = @"CCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIView *backgroundView = [UIView new];
+    backgroundView.backgroundColor = [UIColor blackColor];
+    
+    UILabel *placeholder = [UILabel new];
+    placeholder.backgroundColor = [UIColor clearColor];
+    placeholder.textColor = [UIColor whiteColor];
+    placeholder.font = [UIFont fontWithName:@"Georgia" size:16.0];
+    placeholder.numberOfLines = 0;
+    placeholder.textAlignment = NSTextAlignmentCenter;
+    placeholder.text = @"";
+    [backgroundView addSubview:placeholder];
+    
+    self.collectionView.backgroundView = backgroundView;
+    
+    CGFloat padding = 32.0;
+    placeholder.frame = CGRectMake(padding, padding, backgroundView.frame.size.width - 2*padding, backgroundView.frame.size.height - 2*padding);
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -51,6 +68,16 @@ static NSString * const reuseIdentifier = @"CCell";
     {
         _objectArray = [NSMutableArray new];
     }
+    
+    if ([_objectArray count] == 0)
+    {
+        ((UILabel *)(self.collectionView.backgroundView.subviews[0])).text = @"Favorited songs will appear here so you don't forget them!";
+    }
+    else
+    {
+        ((UILabel *)(self.collectionView.backgroundView.subviews[0])).text = @"";
+    }
+    
     [self.collectionView reloadData];
 }
 
@@ -105,13 +132,13 @@ static NSString * const reuseIdentifier = @"CCell";
     {
         [cell loadImageWithCompletion:^(NSData *data)
          {
-             if (data)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     // NSLog(@"cached 1 image");
-                     [_images setObject:[UIImage imageWithData:data] forKey:key];
-                 });
-             }
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 if (data)
+                {
+                    // NSLog(@"cached 1 image");
+                    [_images setObject:[UIImage imageWithData:data] forKey:key];
+                }
+             });
          }];
     }
     else

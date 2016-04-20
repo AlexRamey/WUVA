@@ -15,6 +15,7 @@
 @interface WUVPlayerViewController () <TritonPlayerDelegate>
 @property (nonatomic, strong) TritonPlayer *tritonPlayer;
 @property (nonatomic, weak) IBOutlet UIImageView *coverArt;
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) NSNumber *interruptedOnPlayback;
 @property (nonatomic, weak) IBOutlet UIButton *play;
@@ -472,9 +473,11 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         
         if (!_coverArt.image)   //cache miss
         {
+            [_activityIndicator startAnimating];
             WUVImageLoader *imageLoader = [WUVImageLoader new];
             [imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [_activityIndicator stopAnimating];
                     if (!artist || !track)
                     {
                         // We passed a nil to the imageLoader for either artist or track.

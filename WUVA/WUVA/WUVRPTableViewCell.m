@@ -28,21 +28,29 @@
 - (void)loadImageWithCompletion:(void (^)(NSData *imageData))completion
 {
     WUVImageLoader *imageLoader = [WUVImageLoader new];
+    [_activityIndicator startAnimating];
     [imageLoader loadImageForArtist:self.artist.text track:self.songTitle.text completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track)
     {
+        BOOL isRelevant = (self.artist.text != nil) && ([artist compare:self.artist.text] == NSOrderedSame) && (self.songTitle.text != nil) && ([track compare:self.songTitle.text] == NSOrderedSame);
         if (release)
         {
-            if ((self.artist.text != nil) && ([artist compare:self.artist.text] == NSOrderedSame) && (self.songTitle.text != nil) && ([track compare:self.songTitle.text] == NSOrderedSame))
+            if (isRelevant)
             {
-                // results are still relevant
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [_activityIndicator stopAnimating];
                     self.coverArt.image = [UIImage imageWithData:release.artwork];
                 });
             }
-            completion(release.artwork);
+            completion(release.artwork);    //cache regardless of relevancy
         }
         else
         {
+            if (isRelevant)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_activityIndicator stopAnimating];
+                });
+            }
             completion(nil);
         }
     }];
