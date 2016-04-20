@@ -280,50 +280,8 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
         [newInfo setObject:@"92.7 Nash Icon" forKey:MPMediaItemPropertyTitle];
     }
     
-    // Set album art info
-    if (_coverArt.image)
-    {
-        UIImage *lockscreenArt = [self overlayImageOnItsBlurredSelf:_coverArt.image];
-        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:lockscreenArt];
-        [newInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
-    }
-    
     // Update the now playing info
     info.nowPlayingInfo = newInfo;
-}
-
--(UIImage *)overlayImageOnItsBlurredSelf:(UIImage *)foreground
-{
-    // This is the path that we will cut out of the foreground image to form the maskImage
-    UIBezierPath *circlePath = [UIBezierPath bezierPath];
-    [circlePath addArcWithCenter:CGPointMake(foreground.size.width / 2.0, foreground.size.height / 2.0) radius:(foreground.size.width / 4.0) startAngle:0 endAngle:2 * M_PI clockwise:YES];
-    
-    // Create an image context containing the original UIImage.
-    UIGraphicsBeginImageContext(foreground.size);
-    [foreground drawAtPoint:CGPointZero];
-    
-    // Clip to the bezier path and clear that portion of the image.
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextAddPath(context,circlePath.CGPath);
-    CGContextClip(context);
-    CGContextClearRect(context,CGRectMake(0,0,foreground.size.width,foreground.size.height));
-                       
-    // Build a new UIImage from the image context.
-    CGImageRef maskImage = CGBitmapContextCreateImage(UIGraphicsGetCurrentContext());
-    UIGraphicsEndImageContext();
-    
-    // Overlay the foreground image on top of its blurred self, using maskImage to
-    // specify which parts to blur. (all but central circle in this case).
-    UIColor *tintColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:.60];
-    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:foreground withRadius:64 tintColor:tintColor saturationDeltaFactor:2.0 maskImage:[UIImage imageWithCGImage:maskImage]];
-    CGImageRelease(maskImage);
-    UIGraphicsBeginImageContextWithOptions(backgroundImage.size, NO, 0.0);
-    [backgroundImage drawInRect:CGRectMake(0, 0, backgroundImage.size.width, backgroundImage.size.height)];
-    [foreground drawInRect:CGRectMake(0.0, 0.0, foreground.size.width, foreground.size.height)];
-    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return result;
 }
 
 /* This method updates the UI and NowPlayingInfo for the paused (or stopped) state */
@@ -390,29 +348,6 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
     [[NSUserDefaults standardUserDefaults] setObject:UIImagePNGRepresentation(image) forKey:WUV_CACHED_IMAGE_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-/*
--(long)timeUntilSongFinishes:(NSDictionary *)trackEventData
-{
-    // determine UNIX start time in seconds
-    long long start_time = [(trackEventData[@"cue_time_start"]) longLongValue];
-    start_time /= 1000;
-    
-    // determine duration in seconds
-    NSString *duration = trackEventData[@"cue_time_duration"];
-    NSInteger colon_location = [duration rangeOfString:@":" ].location;
-    NSInteger minutes = [[duration substringWithRange:NSMakeRange(0, colon_location)] intValue];
-    NSInteger seconds = [[duration substringWithRange:NSMakeRange(colon_location + 1, 2)] intValue];
-    NSInteger total_duration = (60 * minutes) + seconds + 1; // round up by 1 sec.
-    
-    // determine UNIX current time in seconds
-    NSInteger current_time = (long)([[NSDate date] timeIntervalSince1970]);
-    
-    NSLog(@"Start Time: %lld", start_time);
-    NSLog(@"Current Time: %ld", (long)current_time);
-    
-    return (long)(start_time + total_duration - current_time);
-}
-*/
 
 - (void)displayAlertWithTitle:(NSString *)title message:(NSString*)message
 {
@@ -477,7 +412,14 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
             WUVImageLoader *imageLoader = [WUVImageLoader new];
             [imageLoader loadImageForArtist:currentArtistName track:currentSongTitle completion:^(NSError *error, WUVRelease *release, NSString *artist, NSString *track) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [_activityIndicator stopAnimating];
+                    BOOL notRelevant = ([artist compare:_artist.text] != NSOrderedSame) ||
+                    ([track compare:_songTitle.text] != NSOrderedSame);
+                    
+                    if (!notRelevant)
+                    {
+                        [_activityIndicator stopAnimating];
+                    }
+                    
                     if (!artist || !track)
                     {
                         // We passed a nil to the imageLoader for either artist or track.
@@ -485,8 +427,7 @@ NSString * const WUV_CACHED_IMAGE_ID_KEY = @"WUV_CACHED_IMAGE_ID_KEY";
                         // if a cuePoint comes in without track/artist info.
                         return;
                     }
-                    else if (([artist compare:_artist.text] != NSOrderedSame) ||
-                        ([track compare:_songTitle.text] != NSOrderedSame))
+                    else if (notRelevant)
                     {
                         // song has changed. These results are no longer relevant.
                         return;
